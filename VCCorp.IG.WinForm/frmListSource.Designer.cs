@@ -29,21 +29,19 @@ namespace VCCorp.IG.WinForm
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnPost = new System.Windows.Forms.Button();
-            this.btnHashtag = new System.Windows.Forms.Button();
-            this.btnLocation = new System.Windows.Forms.Button();
             this.rtxtDisplayResult = new System.Windows.Forms.RichTextBox();
-            this.btnOriginAudio = new System.Windows.Forms.Button();
             this.txtOptions = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnGetSourceId = new System.Windows.Forms.Button();
+            this.btnGetPostId = new System.Windows.Forms.Button();
             this.btnLoginIG = new System.Windows.Forms.Button();
+            this.btnGetSourceId = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.btnAuto = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnCrawlerPost = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnAuto = new System.Windows.Forms.Button();
+            this.btnSCDEComment = new System.Windows.Forms.Button();
             this.btnCrawlerComment = new System.Windows.Forms.Button();
             this.pnlCefsharp = new System.Windows.Forms.Panel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -55,7 +53,8 @@ namespace VCCorp.IG.WinForm
             this.label2 = new System.Windows.Forms.Label();
             this.txtResutlUrl = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSCDEPost = new System.Windows.Forms.Button();
+            this.btnFresh = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -63,65 +62,25 @@ namespace VCCorp.IG.WinForm
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnPost
-            // 
-            this.btnPost.Location = new System.Drawing.Point(22, 19);
-            this.btnPost.Name = "btnPost";
-            this.btnPost.Size = new System.Drawing.Size(74, 37);
-            this.btnPost.TabIndex = 0;
-            this.btnPost.Text = "Profile";
-            this.btnPost.UseVisualStyleBackColor = true;
-            this.btnPost.Click += new System.EventHandler(this.btnPost_Click);
-            // 
-            // btnHashtag
-            // 
-            this.btnHashtag.Location = new System.Drawing.Point(115, 19);
-            this.btnHashtag.Name = "btnHashtag";
-            this.btnHashtag.Size = new System.Drawing.Size(74, 37);
-            this.btnHashtag.TabIndex = 2;
-            this.btnHashtag.Text = "Hashtag";
-            this.btnHashtag.UseVisualStyleBackColor = true;
-            this.btnHashtag.Click += new System.EventHandler(this.btnHashtag_Click);
-            // 
-            // btnLocation
-            // 
-            this.btnLocation.Location = new System.Drawing.Point(22, 69);
-            this.btnLocation.Name = "btnLocation";
-            this.btnLocation.Size = new System.Drawing.Size(74, 37);
-            this.btnLocation.TabIndex = 3;
-            this.btnLocation.Text = "Location";
-            this.btnLocation.UseVisualStyleBackColor = true;
-            this.btnLocation.Click += new System.EventHandler(this.btnLocation_Click);
-            // 
             // rtxtDisplayResult
             // 
-            this.rtxtDisplayResult.Location = new System.Drawing.Point(564, 172);
+            this.rtxtDisplayResult.Location = new System.Drawing.Point(558, 243);
             this.rtxtDisplayResult.Name = "rtxtDisplayResult";
-            this.rtxtDisplayResult.Size = new System.Drawing.Size(480, 343);
+            this.rtxtDisplayResult.Size = new System.Drawing.Size(537, 407);
             this.rtxtDisplayResult.TabIndex = 4;
             this.rtxtDisplayResult.Text = "";
             // 
-            // btnOriginAudio
-            // 
-            this.btnOriginAudio.Location = new System.Drawing.Point(115, 69);
-            this.btnOriginAudio.Name = "btnOriginAudio";
-            this.btnOriginAudio.Size = new System.Drawing.Size(74, 37);
-            this.btnOriginAudio.TabIndex = 5;
-            this.btnOriginAudio.Text = "OriginAudio";
-            this.btnOriginAudio.UseVisualStyleBackColor = true;
-            this.btnOriginAudio.Click += new System.EventHandler(this.btnOriginAudio_Click);
-            // 
             // txtOptions
             // 
-            this.txtOptions.Location = new System.Drawing.Point(129, 28);
+            this.txtOptions.Location = new System.Drawing.Point(119, 25);
             this.txtOptions.Name = "txtOptions";
-            this.txtOptions.Size = new System.Drawing.Size(100, 20);
+            this.txtOptions.Size = new System.Drawing.Size(79, 20);
             this.txtOptions.TabIndex = 7;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 31);
+            this.label1.Location = new System.Drawing.Point(6, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 13);
             this.label1.TabIndex = 6;
@@ -129,57 +88,83 @@ namespace VCCorp.IG.WinForm
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnStop);
-            this.groupBox1.Controls.Add(this.btnAuto);
-            this.groupBox1.Controls.Add(this.btnGetSourceId);
+            this.groupBox1.Controls.Add(this.btnGetPostId);
             this.groupBox1.Controls.Add(this.btnLoginIG);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.btnGetSourceId);
             this.groupBox1.Controls.Add(this.txtOptions);
             this.groupBox1.Location = new System.Drawing.Point(30, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(255, 160);
+            this.groupBox1.Size = new System.Drawing.Size(213, 165);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Điều kiện";
             // 
-            // btnGetSourceId
+            // btnGetPostId
             // 
-            this.btnGetSourceId.Location = new System.Drawing.Point(129, 68);
-            this.btnGetSourceId.Name = "btnGetSourceId";
-            this.btnGetSourceId.Size = new System.Drawing.Size(95, 38);
-            this.btnGetSourceId.TabIndex = 11;
-            this.btnGetSourceId.Text = "Cập nhập Id_Source Null";
-            this.btnGetSourceId.UseVisualStyleBackColor = true;
-            this.btnGetSourceId.Click += new System.EventHandler(this.btnGetSourceId_Click);
+            this.btnGetPostId.Location = new System.Drawing.Point(111, 81);
+            this.btnGetPostId.Name = "btnGetPostId";
+            this.btnGetPostId.Size = new System.Drawing.Size(87, 68);
+            this.btnGetPostId.TabIndex = 12;
+            this.btnGetPostId.Text = "Cập nhập Post_Id Null Si_Crawl_Data_Excel";
+            this.btnGetPostId.UseVisualStyleBackColor = true;
+            this.btnGetPostId.Click += new System.EventHandler(this.btnGetPostId_Click);
             // 
             // btnLoginIG
             // 
-            this.btnLoginIG.Location = new System.Drawing.Point(19, 68);
+            this.btnLoginIG.Location = new System.Drawing.Point(18, 50);
             this.btnLoginIG.Name = "btnLoginIG";
-            this.btnLoginIG.Size = new System.Drawing.Size(83, 38);
+            this.btnLoginIG.Size = new System.Drawing.Size(57, 25);
             this.btnLoginIG.TabIndex = 10;
-            this.btnLoginIG.Text = "Đặng nhập IG";
+            this.btnLoginIG.Text = "Login IG";
             this.btnLoginIG.UseVisualStyleBackColor = true;
             this.btnLoginIG.Click += new System.EventHandler(this.btnLoginIG_Click);
             // 
+            // btnGetSourceId
+            // 
+            this.btnGetSourceId.Location = new System.Drawing.Point(18, 81);
+            this.btnGetSourceId.Name = "btnGetSourceId";
+            this.btnGetSourceId.Size = new System.Drawing.Size(87, 68);
+            this.btnGetSourceId.TabIndex = 11;
+            this.btnGetSourceId.Text = "Cập nhập Id_Source Null Si_Demand_Source";
+            this.btnGetSourceId.UseVisualStyleBackColor = true;
+            this.btnGetSourceId.Click += new System.EventHandler(this.btnGetSourceId_Click);
+            // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(20, 62);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(74, 37);
+            this.btnStop.TabIndex = 13;
+            this.btnStop.Text = "Dừng";
+            this.btnStop.UseVisualStyleBackColor = true;
+            // 
+            // btnAuto
+            // 
+            this.btnAuto.Location = new System.Drawing.Point(20, 19);
+            this.btnAuto.Name = "btnAuto";
+            this.btnAuto.Size = new System.Drawing.Size(74, 37);
+            this.btnAuto.TabIndex = 12;
+            this.btnAuto.Text = "Tự động";
+            this.btnAuto.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btnPost);
-            this.groupBox2.Controls.Add(this.btnOriginAudio);
-            this.groupBox2.Controls.Add(this.btnHashtag);
-            this.groupBox2.Controls.Add(this.btnLocation);
-            this.groupBox2.Location = new System.Drawing.Point(291, 12);
+            this.groupBox2.Controls.Add(this.btnFresh);
+            this.groupBox2.Controls.Add(this.btnAuto);
+            this.groupBox2.Controls.Add(this.btnStop);
+            this.groupBox2.Location = new System.Drawing.Point(975, 22);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(213, 134);
+            this.groupBox2.Size = new System.Drawing.Size(110, 155);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Danh sách nguồn";
+            this.groupBox2.Text = "Hẹn giờ";
             // 
             // btnCrawlerPost
             // 
-            this.btnCrawlerPost.Location = new System.Drawing.Point(24, 22);
+            this.btnCrawlerPost.Location = new System.Drawing.Point(24, 25);
             this.btnCrawlerPost.Name = "btnCrawlerPost";
-            this.btnCrawlerPost.Size = new System.Drawing.Size(169, 41);
+            this.btnCrawlerPost.Size = new System.Drawing.Size(169, 37);
             this.btnCrawlerPost.TabIndex = 10;
             this.btnCrawlerPost.Text = "Si_Demand_Source";
             this.btnCrawlerPost.UseVisualStyleBackColor = true;
@@ -188,36 +173,28 @@ namespace VCCorp.IG.WinForm
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.btnCrawlerPost);
-            this.groupBox3.Location = new System.Drawing.Point(510, 12);
+            this.groupBox3.Controls.Add(this.btnSCDEComment);
+            this.groupBox3.Location = new System.Drawing.Point(269, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(220, 134);
+            this.groupBox3.Size = new System.Drawing.Size(231, 165);
             this.groupBox3.TabIndex = 11;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Crawl Post";
+            this.groupBox3.Text = "Post";
             // 
-            // btnStop
+            // btnSCDEComment
             // 
-            this.btnStop.Location = new System.Drawing.Point(129, 117);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(95, 37);
-            this.btnStop.TabIndex = 13;
-            this.btnStop.Text = "Dừng";
-            this.btnStop.UseVisualStyleBackColor = true;
-            // 
-            // btnAuto
-            // 
-            this.btnAuto.Location = new System.Drawing.Point(19, 117);
-            this.btnAuto.Name = "btnAuto";
-            this.btnAuto.Size = new System.Drawing.Size(83, 37);
-            this.btnAuto.TabIndex = 12;
-            this.btnAuto.Text = "Tự động";
-            this.btnAuto.UseVisualStyleBackColor = true;
+            this.btnSCDEComment.Location = new System.Drawing.Point(24, 67);
+            this.btnSCDEComment.Name = "btnSCDEComment";
+            this.btnSCDEComment.Size = new System.Drawing.Size(169, 39);
+            this.btnSCDEComment.TabIndex = 12;
+            this.btnSCDEComment.Text = "Si_Crawl_Data_Excel";
+            this.btnSCDEComment.UseVisualStyleBackColor = true;
             // 
             // btnCrawlerComment
             // 
-            this.btnCrawlerComment.Location = new System.Drawing.Point(15, 22);
+            this.btnCrawlerComment.Location = new System.Drawing.Point(26, 18);
             this.btnCrawlerComment.Name = "btnCrawlerComment";
-            this.btnCrawlerComment.Size = new System.Drawing.Size(158, 37);
+            this.btnCrawlerComment.Size = new System.Drawing.Size(169, 37);
             this.btnCrawlerComment.TabIndex = 11;
             this.btnCrawlerComment.Text = "Si_Demand_Source_Post";
             this.btnCrawlerComment.UseVisualStyleBackColor = true;
@@ -225,9 +202,9 @@ namespace VCCorp.IG.WinForm
             // 
             // pnlCefsharp
             // 
-            this.pnlCefsharp.Location = new System.Drawing.Point(30, 225);
+            this.pnlCefsharp.Location = new System.Drawing.Point(12, 243);
             this.pnlCefsharp.Name = "pnlCefsharp";
-            this.pnlCefsharp.Size = new System.Drawing.Size(474, 290);
+            this.pnlCefsharp.Size = new System.Drawing.Size(519, 407);
             this.pnlCefsharp.TabIndex = 12;
             // 
             // groupBox4
@@ -238,9 +215,9 @@ namespace VCCorp.IG.WinForm
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.label2);
-            this.groupBox4.Location = new System.Drawing.Point(932, 12);
+            this.groupBox4.Location = new System.Drawing.Point(765, 22);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(142, 134);
+            this.groupBox4.Size = new System.Drawing.Size(180, 155);
             this.groupBox4.TabIndex = 13;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Kết quả bóc tách";
@@ -248,7 +225,7 @@ namespace VCCorp.IG.WinForm
             // lblError
             // 
             this.lblError.AutoSize = true;
-            this.lblError.Location = new System.Drawing.Point(103, 69);
+            this.lblError.Location = new System.Drawing.Point(130, 69);
             this.lblError.Name = "lblError";
             this.lblError.Size = new System.Drawing.Size(13, 13);
             this.lblError.TabIndex = 14;
@@ -257,7 +234,7 @@ namespace VCCorp.IG.WinForm
             // lblOk
             // 
             this.lblOk.AutoSize = true;
-            this.lblOk.Location = new System.Drawing.Point(103, 46);
+            this.lblOk.Location = new System.Drawing.Point(130, 46);
             this.lblOk.Name = "lblOk";
             this.lblOk.Size = new System.Drawing.Size(13, 13);
             this.lblOk.TabIndex = 13;
@@ -266,7 +243,7 @@ namespace VCCorp.IG.WinForm
             // lblSum
             // 
             this.lblSum.AutoSize = true;
-            this.lblSum.Location = new System.Drawing.Point(103, 22);
+            this.lblSum.Location = new System.Drawing.Point(130, 22);
             this.lblSum.Name = "lblSum";
             this.lblSum.Size = new System.Drawing.Size(13, 13);
             this.lblSum.TabIndex = 11;
@@ -301,43 +278,53 @@ namespace VCCorp.IG.WinForm
             // 
             // txtResutlUrl
             // 
-            this.txtResutlUrl.Location = new System.Drawing.Point(30, 187);
+            this.txtResutlUrl.Location = new System.Drawing.Point(12, 217);
             this.txtResutlUrl.Name = "txtResutlUrl";
-            this.txtResutlUrl.Size = new System.Drawing.Size(474, 20);
+            this.txtResutlUrl.Size = new System.Drawing.Size(1083, 20);
             this.txtResutlUrl.TabIndex = 14;
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.button1);
             this.groupBox5.Controls.Add(this.btnCrawlerComment);
-            this.groupBox5.Location = new System.Drawing.Point(736, 12);
+            this.groupBox5.Controls.Add(this.btnSCDEPost);
+            this.groupBox5.Location = new System.Drawing.Point(523, 22);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(190, 134);
+            this.groupBox5.Size = new System.Drawing.Size(222, 155);
             this.groupBox5.TabIndex = 15;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Crawl Comment";
             // 
-            // button1
+            // btnSCDEPost
             // 
-            this.button1.Location = new System.Drawing.Point(15, 79);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(158, 37);
-            this.button1.TabIndex = 12;
-            this.button1.Text = "Si_Crawl_Data_Excel";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnSCDEPost.Location = new System.Drawing.Point(26, 61);
+            this.btnSCDEPost.Name = "btnSCDEPost";
+            this.btnSCDEPost.Size = new System.Drawing.Size(169, 37);
+            this.btnSCDEPost.TabIndex = 13;
+            this.btnSCDEPost.Text = "Si_Crawl_Data_Excel";
+            this.btnSCDEPost.UseVisualStyleBackColor = true;
+            // 
+            // btnFresh
+            // 
+            this.btnFresh.Location = new System.Drawing.Point(20, 105);
+            this.btnFresh.Name = "btnFresh";
+            this.btnFresh.Size = new System.Drawing.Size(74, 37);
+            this.btnFresh.TabIndex = 14;
+            this.btnFresh.Text = "Làm mới";
+            this.btnFresh.UseVisualStyleBackColor = true;
+            this.btnFresh.Click += new System.EventHandler(this.btnFresh_Click);
             // 
             // frmListSource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1086, 538);
+            this.ClientSize = new System.Drawing.Size(1131, 689);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.txtResutlUrl);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.rtxtDisplayResult);
             this.Controls.Add(this.pnlCefsharp);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "frmListSource";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -356,12 +343,7 @@ namespace VCCorp.IG.WinForm
         }
 
         #endregion
-
-        private System.Windows.Forms.Button btnPost;
-        private System.Windows.Forms.Button btnHashtag;
-        private System.Windows.Forms.Button btnLocation;
         private System.Windows.Forms.RichTextBox rtxtDisplayResult;
-        private System.Windows.Forms.Button btnOriginAudio;
         private System.Windows.Forms.TextBox txtOptions;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -383,6 +365,9 @@ namespace VCCorp.IG.WinForm
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnAuto;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSCDEComment;
+        private System.Windows.Forms.Button btnSCDEPost;
+        private System.Windows.Forms.Button btnGetPostId;
+        private System.Windows.Forms.Button btnFresh;
     }
 }

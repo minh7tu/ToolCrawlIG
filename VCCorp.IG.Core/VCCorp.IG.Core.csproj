@@ -79,11 +79,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BUS\CrisisPostBUS.cs" />
     <Compile Include="BUS\SiCrawlDataExcelBUS.cs" />
     <Compile Include="BUS\SiDemandSourceBUS.cs" />
     <Compile Include="BUS\SiDemandSourcePostBUS.cs" />
-    <Compile Include="DAO\CrisisPostDAO.cs" />
     <Compile Include="DAO\SiCrawlDataExcelDAO.cs" />
     <Compile Include="DAO\SiDemandSourceDAO.cs" />
     <Compile Include="DAO\SiDemandSourcePostDAO.cs" />

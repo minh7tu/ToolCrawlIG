@@ -26,5 +26,10 @@ namespace VCCorp.IG.Core.BUS
         {
             _dao.Update(id, postId, status);
         }
+
+        public List<SiCrawlDataExcelDTO> GetListPostId()
+        {
+            return _dao.GetListPostId();
+        }
     }
 }

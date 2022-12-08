@@ -11,7 +11,7 @@ namespace VCCorp.IG.Core.DAO
 {
     public class SiCrawlDataExcelDAO
     {
-        private readonly MySqlDbContext _context;
+        private readonly MySqlDbContext _context = new MySqlDbContext();
 
         public SiCrawlDataExcelDAO()
         {
@@ -66,6 +66,33 @@ namespace VCCorp.IG.Core.DAO
             cmd.ExecuteNonQuery();
 
             _context.Dispose();
+        }
+
+        //Lấy danh sách PostId null
+        public List<SiCrawlDataExcelDTO> GetListPostId()
+        {
+            List<SiCrawlDataExcelDTO> listPostId = new List<SiCrawlDataExcelDTO>();
+
+            _context.OpenMySql();
+
+            string sql = "select id,post_id,status from si_crawl_data_excel where link like '%instagram%'";
+
+            MySqlCommand cmd = new MySqlCommand(sql, _context._connect);
+
+            MySqlDataReader read = cmd.ExecuteReader();
+
+            while(read.Read())
+            {
+                SiCrawlDataExcelDTO dto = new SiCrawlDataExcelDTO();
+
+                dto.Id = Convert.ToInt32(read["id"]);
+                dto.PostId = read["post_id"].ToString();
+                dto.Status = (int)read["status"];
+
+                listPostId.Add(dto);
+            }    
+
+            return listPostId;
         }
     }
 }

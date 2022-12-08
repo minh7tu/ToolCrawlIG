@@ -48,9 +48,8 @@ namespace VCCorp.IG.WinForm
         }
 
         //Lấy danh sách source trong bảng si_demand_source
-        private void btnPost_Click(object sender, EventArgs e)
+        private void GetListSiDemandSource()
         {
-
             SiDemandSourceBUS source = new SiDemandSourceBUS();
             //SiDemandSourceDTO dto = new SiDemandSourceDTO();
 
@@ -133,13 +132,12 @@ namespace VCCorp.IG.WinForm
                 }
 
             }
-
-
         }
 
         //Bóc lấy bài post
         private void btnCrawlerPost_Click(object sender, EventArgs e)
         {
+            GetListSiDemandSource();
 
             SiDemandSourceBUS bus = new SiDemandSourceBUS();
             
@@ -346,21 +344,6 @@ namespace VCCorp.IG.WinForm
 
             _browser = new ChromiumWebBrowser("https://www.instagram.com/");
             this.pnlCefsharp.Controls.Add(_browser);
-        }
-
-        private void btnLocation_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Đang phát triển", "Thông báo");
-        }
-
-        private void btnOriginAudio_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Đang phát triển", "Thông báo");
-        }
-
-        private void btnHashtag_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Đang phát triển", "Thông báo");
         }
 
         //Cập nhập source id null
@@ -570,6 +553,22 @@ namespace VCCorp.IG.WinForm
                 return;
             }
                              
+        }
+
+        private void btnFresh_Click(object sender, EventArgs e)
+        {
+            rtxtDisplayResult.Clear();
+        }
+
+        private void btnGetPostId_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Lấy danh sách post_id null trong bảng si_crawl_data_excel
+        private void GetPostIdNull()
+        {
+
         }
     }
 }  
