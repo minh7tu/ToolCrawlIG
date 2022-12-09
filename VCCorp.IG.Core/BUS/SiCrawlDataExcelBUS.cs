@@ -17,19 +17,19 @@ namespace VCCorp.IG.Core.BUS
             _dao = new SiCrawlDataExcelDAO();
         }
 
-        public List<SiCrawlDataExcelDTO> GetListComment()
-        {
-            return _dao.GetListComment();
-        }
-
         public void Update(int id, string postId, int status)
         {
             _dao.Update(id, postId, status);
         }
 
-        public List<SiCrawlDataExcelDTO> GetListPostId()
+        public List<SiCrawlDataExcelDTO> GetListPost()
         {
-            return _dao.GetListPostId();
+            return _dao.GetListPost();
+        }
+
+        public List<SiCrawlDataExcelDTO> GetListComment()
+        {
+            return _dao.GetListComment();
         }
     }
 }

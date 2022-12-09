@@ -117,9 +117,7 @@ namespace VCCorp.IG.Core.DAO
             MySqlCommand cmd = new MySqlCommand(sql, _context._connect);
             cmd.CommandTimeout = int.MaxValue;
 
-            MySqlDataReader dataReader = cmd.ExecuteReader();
-
-            
+            MySqlDataReader dataReader = cmd.ExecuteReader();           
 
             while (dataReader.Read())
             {

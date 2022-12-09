@@ -33,12 +33,12 @@ namespace VCCorp.IG.WinForm
             this.txtOptions = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnGetPostId = new System.Windows.Forms.Button();
             this.btnLoginIG = new System.Windows.Forms.Button();
             this.btnGetSourceId = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnAuto = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnFresh = new System.Windows.Forms.Button();
             this.btnCrawlerPost = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnSCDEComment = new System.Windows.Forms.Button();
@@ -54,7 +54,6 @@ namespace VCCorp.IG.WinForm
             this.txtResutlUrl = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.btnSCDEPost = new System.Windows.Forms.Button();
-            this.btnFresh = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -88,7 +87,6 @@ namespace VCCorp.IG.WinForm
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnGetPostId);
             this.groupBox1.Controls.Add(this.btnLoginIG);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.btnGetSourceId);
@@ -99,16 +97,6 @@ namespace VCCorp.IG.WinForm
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Điều kiện";
-            // 
-            // btnGetPostId
-            // 
-            this.btnGetPostId.Location = new System.Drawing.Point(111, 81);
-            this.btnGetPostId.Name = "btnGetPostId";
-            this.btnGetPostId.Size = new System.Drawing.Size(87, 68);
-            this.btnGetPostId.TabIndex = 12;
-            this.btnGetPostId.Text = "Cập nhập Post_Id Null Si_Crawl_Data_Excel";
-            this.btnGetPostId.UseVisualStyleBackColor = true;
-            this.btnGetPostId.Click += new System.EventHandler(this.btnGetPostId_Click);
             // 
             // btnLoginIG
             // 
@@ -158,7 +146,17 @@ namespace VCCorp.IG.WinForm
             this.groupBox2.Size = new System.Drawing.Size(110, 155);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Hẹn giờ";
+            this.groupBox2.Text = "Tiện ích";
+            // 
+            // btnFresh
+            // 
+            this.btnFresh.Location = new System.Drawing.Point(20, 105);
+            this.btnFresh.Name = "btnFresh";
+            this.btnFresh.Size = new System.Drawing.Size(74, 37);
+            this.btnFresh.TabIndex = 14;
+            this.btnFresh.Text = "Làm mới";
+            this.btnFresh.UseVisualStyleBackColor = true;
+            this.btnFresh.Click += new System.EventHandler(this.btnFresh_Click);
             // 
             // btnCrawlerPost
             // 
@@ -173,7 +171,7 @@ namespace VCCorp.IG.WinForm
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.btnCrawlerPost);
-            this.groupBox3.Controls.Add(this.btnSCDEComment);
+            this.groupBox3.Controls.Add(this.btnSCDEPost);
             this.groupBox3.Location = new System.Drawing.Point(269, 12);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(231, 165);
@@ -183,12 +181,13 @@ namespace VCCorp.IG.WinForm
             // 
             // btnSCDEComment
             // 
-            this.btnSCDEComment.Location = new System.Drawing.Point(24, 67);
+            this.btnSCDEComment.Location = new System.Drawing.Point(26, 62);
             this.btnSCDEComment.Name = "btnSCDEComment";
             this.btnSCDEComment.Size = new System.Drawing.Size(169, 39);
             this.btnSCDEComment.TabIndex = 12;
             this.btnSCDEComment.Text = "Si_Crawl_Data_Excel";
             this.btnSCDEComment.UseVisualStyleBackColor = true;
+            this.btnSCDEComment.Click += new System.EventHandler(this.btnSCDEComment_Click);
             // 
             // btnCrawlerComment
             // 
@@ -286,7 +285,7 @@ namespace VCCorp.IG.WinForm
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.btnCrawlerComment);
-            this.groupBox5.Controls.Add(this.btnSCDEPost);
+            this.groupBox5.Controls.Add(this.btnSCDEComment);
             this.groupBox5.Location = new System.Drawing.Point(523, 22);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(222, 155);
@@ -296,22 +295,13 @@ namespace VCCorp.IG.WinForm
             // 
             // btnSCDEPost
             // 
-            this.btnSCDEPost.Location = new System.Drawing.Point(26, 61);
+            this.btnSCDEPost.Location = new System.Drawing.Point(24, 72);
             this.btnSCDEPost.Name = "btnSCDEPost";
             this.btnSCDEPost.Size = new System.Drawing.Size(169, 37);
             this.btnSCDEPost.TabIndex = 13;
             this.btnSCDEPost.Text = "Si_Crawl_Data_Excel";
             this.btnSCDEPost.UseVisualStyleBackColor = true;
-            // 
-            // btnFresh
-            // 
-            this.btnFresh.Location = new System.Drawing.Point(20, 105);
-            this.btnFresh.Name = "btnFresh";
-            this.btnFresh.Size = new System.Drawing.Size(74, 37);
-            this.btnFresh.TabIndex = 14;
-            this.btnFresh.Text = "Làm mới";
-            this.btnFresh.UseVisualStyleBackColor = true;
-            this.btnFresh.Click += new System.EventHandler(this.btnFresh_Click);
+            this.btnSCDEPost.Click += new System.EventHandler(this.btnSCDEPost_Click);
             // 
             // frmListSource
             // 
@@ -367,7 +357,6 @@ namespace VCCorp.IG.WinForm
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button btnSCDEComment;
         private System.Windows.Forms.Button btnSCDEPost;
-        private System.Windows.Forms.Button btnGetPostId;
         private System.Windows.Forms.Button btnFresh;
     }
 }

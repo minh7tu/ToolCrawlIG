@@ -8,288 +8,215 @@ namespace VCCorp.IG.Core.DTO.JsonToObjectIG
 {
     public class SourceA1
     {
-        public class BiographyWithEntities
+        public class Candidate
         {
-            public string raw_text { get; set; }
-            public List<Entity> entities { get; set; }
-        }
-
-        public class ClipsMusicAttributionInfo
-        {
-            public string artist_name { get; set; }
-            public string song_name { get; set; }
-            public bool uses_original_audio { get; set; }
-            public bool should_mute_audio { get; set; }
-            public string should_mute_audio_reason { get; set; }
-            public string audio_id { get; set; }
-        }
-
-        public class DashInfo
-        {
-            public bool is_dash_eligible { get; set; }
-            public string video_dash_manifest { get; set; }
-            public int number_of_qualities { get; set; }
-        }
-
-        public class Dimensions
-        {
-            public int height { get; set; }
             public int width { get; set; }
+            public int height { get; set; }
+            public string url { get; set; }
         }
 
-        public class Edge
+        public class Caption
         {
-            public Node node { get; set; }
-        }
-
-        public class EdgeFelixVideoTimeline
-        {
-            public int count { get; set; }
-            public PageInfo page_info { get; set; }
-            public List<Edge> edges { get; set; }
-        }
-
-        public class EdgeFollow
-        {
-            public int count { get; set; }
-        }
-
-        public class EdgeFollowedBy
-        {
-            public int count { get; set; }
-        }
-
-        public class EdgeLikedBy
-        {
-            public int count { get; set; }
-        }
-
-        public class EdgeMediaCollections
-        {
-            public int count { get; set; }
-            public PageInfo page_info { get; set; }
-            public List<object> edges { get; set; }
-        }
-
-        public class EdgeMediaPreviewLike
-        {
-            public int count { get; set; }
-        }
-
-        public class EdgeMediaToCaption
-        {
-            public List<Edge> edges { get; set; }
-        }
-
-        public class EdgeMediaToComment
-        {
-            public int count { get; set; }
-        }
-
-        public class EdgeMediaToTaggedUser
-        {
-            public List<Edge> edges { get; set; }
-        }
-
-        public class EdgeMutualFollowedBy
-        {
-            public int count { get; set; }
-            public List<Edge> edges { get; set; }
-        }
-
-        public class EdgeOwnerToTimelineMedia
-        {
-            public int count { get; set; }
-            public PageInfo page_info { get; set; }
-            public List<Edge> edges { get; set; }
-        }
-
-        public class EdgeSavedMedia
-        {
-            public int count { get; set; }
-            public PageInfo page_info { get; set; }
-            public List<object> edges { get; set; }
-        }
-
-        public class EdgeSidecarToChildren
-        {
-            public List<Edge> edges { get; set; }
-        }
-
-        public class Entity
-        {
+            public long pk { get; set; }
+            public int user_id { get; set; }
+            public string text { get; set; }
+            public int type { get; set; }
+            public int created_at { get; set; }
+            public int created_at_utc { get; set; }
+            public string content_type { get; set; }
+            public string status { get; set; }
+            public int bit_flags { get; set; }
+            public bool did_report_as_spam { get; set; }
+            public bool share_enabled { get; set; }
             public User user { get; set; }
-            public object hashtag { get; set; }
+            public bool is_covered { get; set; }
+            public bool is_ranked_comment { get; set; }
+            public long media_id { get; set; }
+            public bool has_translation { get; set; }
+            public int private_reply_status { get; set; }
         }
 
-        public class Graphql
+        public class CarouselMedium
         {
+            public string id { get; set; }
+            public int media_type { get; set; }
+            public ImageVersions2 image_versions2 { get; set; }
+            public int original_width { get; set; }
+            public int original_height { get; set; }
+            public object pk { get; set; }
+            public string carousel_parent_id { get; set; }
+            public string commerciality_status { get; set; }
+            public SharingFrictionInfo sharing_friction_info { get; set; }
+        }
+
+        public class CommentInformTreatment
+        {
+            public bool should_have_inform_treatment { get; set; }
+            public string text { get; set; }
+            public object url { get; set; }
+            public object action_type { get; set; }
+        }
+
+        public class FanClubInfo
+        {
+            public object fan_club_id { get; set; }
+            public object fan_club_name { get; set; }
+            public object is_fan_club_referral_eligible { get; set; }
+            public object fan_consideration_page_revamp_eligiblity { get; set; }
+            public object is_fan_club_gifting_eligible { get; set; }
+        }
+
+        public class FriendshipStatus
+        {
+            public bool following { get; set; }
+            public bool outgoing_request { get; set; }
+            public bool is_bestie { get; set; }
+            public bool is_restricted { get; set; }
+            public bool is_feed_favorite { get; set; }
+        }
+
+        public class ImageVersions2
+        {
+            public List<Candidate> candidates { get; set; }
+        }
+
+        public class Item
+        {
+            public int taken_at { get; set; }
+            public long pk { get; set; }
+            public string id { get; set; }
+            public long device_timestamp { get; set; }
+            public int media_type { get; set; }
+            public string code { get; set; }
+            public string client_cache_key { get; set; }
+            public int filter_type { get; set; }
+            public bool is_unified_video { get; set; }
+            public bool should_request_ads { get; set; }
+            public bool original_media_has_visual_reply_media { get; set; }
+            public bool caption_is_edited { get; set; }
+            public bool like_and_view_counts_disabled { get; set; }
+            public string commerciality_status { get; set; }
+            public bool is_paid_partnership { get; set; }
+            public bool is_visual_reply_commenter_notice_enabled { get; set; }
+            public List<object> clips_tab_pinned_user_ids { get; set; }
+            public bool has_delayed_metadata { get; set; }
+            public Location location { get; set; }
+            public double lat { get; set; }
+            public double lng { get; set; }
+            public bool comment_likes_enabled { get; set; }
+            public bool comment_threading_enabled { get; set; }
+            public int max_num_visible_preview_comments { get; set; }
+            public bool has_more_comments { get; set; }
+            public List<object> preview_comments { get; set; }
+            public List<object> comments { get; set; }
+            public int comment_count { get; set; }
+            public bool can_view_more_preview_comments { get; set; }
+            public bool hide_view_all_comment_entrypoint { get; set; }
+            public string inline_composer_display_condition { get; set; }
+            public int carousel_media_count { get; set; }
+            public List<CarouselMedium> carousel_media { get; set; }
+            public bool can_see_insights_as_brand { get; set; }
+            public bool photo_of_you { get; set; }
+            public bool is_organic_product_tagging_eligible { get; set; }
             public User user { get; set; }
+            public bool can_viewer_reshare { get; set; }
+            public int like_count { get; set; }
+            public bool has_liked { get; set; }
+            public List<object> top_likers { get; set; }
+            public List<object> facepile_top_likers { get; set; }
+            public MashupInfo mashup_info { get; set; }
+            public Caption caption { get; set; }
+            public CommentInformTreatment comment_inform_treatment { get; set; }
+            public SharingFrictionInfo sharing_friction_info { get; set; }
+            public bool can_viewer_save { get; set; }
+            public bool is_in_profile_grid { get; set; }
+            public bool profile_grid_control_enabled { get; set; }
+            public string organic_tracking_token { get; set; }
+            public int has_shared_to_fb { get; set; }
+            public string product_type { get; set; }
+            public int deleted_reason { get; set; }
+            public string integrity_review_decision { get; set; }
+            public object commerce_integrity_review_decision { get; set; }
+            public MusicMetadata music_metadata { get; set; }
+            public bool is_artist_pick { get; set; }
         }
 
         public class Location
         {
-            public string id { get; set; }
-            public bool has_public_page { get; set; }
+            public int pk { get; set; }
+            public string short_name { get; set; }
+            public long facebook_places_id { get; set; }
+            public string external_source { get; set; }
             public string name { get; set; }
-            public string slug { get; set; }
+            public string address { get; set; }
+            public string city { get; set; }
+            public bool has_viewer_saved { get; set; }
+            public double lng { get; set; }
+            public double lat { get; set; }
+            public bool is_eligible_for_guides { get; set; }
         }
 
-        public class Node
+        public class MashupInfo
         {
-            public string username { get; set; }
-            public string __typename { get; set; }
-            public string id { get; set; }
-            public string shortcode { get; set; }
-            public Dimensions dimensions { get; set; }
-            public string display_url { get; set; }
-            public EdgeMediaToTaggedUser edge_media_to_tagged_user { get; set; }
-            public object fact_check_overall_rating { get; set; }
-            public object fact_check_information { get; set; }
-            public object gating_info { get; set; }
-            public SharingFrictionInfo sharing_friction_info { get; set; }
-            public object media_overlay_info { get; set; }
-            public string media_preview { get; set; }
-            public Owner owner { get; set; }
-            public bool is_video { get; set; }
-            public bool has_upcoming_event { get; set; }
-            public object accessibility_caption { get; set; }
-            public DashInfo dash_info { get; set; }
-            public bool has_audio { get; set; }
-            public string tracking_token { get; set; }
-            public string video_url { get; set; }
-            public int video_view_count { get; set; }
-            public EdgeMediaToCaption edge_media_to_caption { get; set; }
-            public EdgeMediaToComment edge_media_to_comment { get; set; }
-            public bool comments_disabled { get; set; }
-            public int taken_at_timestamp { get; set; }
-            public EdgeLikedBy edge_liked_by { get; set; }
-            public EdgeMediaPreviewLike edge_media_preview_like { get; set; }
-            public Location location { get; set; }
-            public object nft_asset_info { get; set; }
-            public string thumbnail_src { get; set; }
-            public List<ThumbnailResource> thumbnail_resources { get; set; }
-            public object felix_profile_grid_crop { get; set; }
-            public List<object> coauthor_producers { get; set; }
-            public List<object> pinned_for_users { get; set; }
-            public object encoding_status { get; set; }
-            public bool is_published { get; set; }
-            public string product_type { get; set; }
-            public string title { get; set; }
-            public double video_duration { get; set; }
-            public User user { get; set; }
-            public double x { get; set; }
-            public double y { get; set; }
-            public string text { get; set; }
-            public ClipsMusicAttributionInfo clips_music_attribution_info { get; set; }
-            public EdgeSidecarToChildren edge_sidecar_to_children { get; set; }
+            public bool mashups_allowed { get; set; }
+            public bool can_toggle_mashups_allowed { get; set; }
+            public bool has_been_mashed_up { get; set; }
+            public object formatted_mashups_count { get; set; }
+            public object original_media { get; set; }
+            public object privacy_filtered_mashups_media_count { get; set; }
+            public object non_privacy_filtered_mashups_media_count { get; set; }
+            public object mashup_type { get; set; }
+            public bool is_creator_requesting_mashup { get; set; }
+            public bool has_nonmimicable_additional_audio { get; set; }
         }
 
-        public class Owner
+        public class MusicMetadata
         {
-            public string id { get; set; }
-            public string username { get; set; }
-        }
-
-        public class PageInfo
-        {
-            public bool has_next_page { get; set; }
-            public string end_cursor { get; set; }
-        }
-
-        public class PinnedForUser
-        {
-            public string id { get; set; }
-            public bool is_verified { get; set; }
-            public string profile_pic_url { get; set; }
-            public string username { get; set; }
+            public string music_canonical_id { get; set; }
+            public object audio_type { get; set; }
+            public object music_info { get; set; }
+            public object original_sound_info { get; set; }
+            public object pinned_media_ids { get; set; }
         }
 
         public class Root
         {
-            public List<List<string>> seo_category_infos { get; set; }
-            public string logging_page_id { get; set; }
-            public bool show_suggested_profiles { get; set; }
-            public Graphql graphql { get; set; }
-            public object toast_content_on_load { get; set; }
-            public bool show_qr_modal { get; set; }
-            public bool show_view_shop { get; set; }
+            public List<Item> items { get; set; }
+            public int num_results { get; set; }
+            public bool more_available { get; set; }
+            public bool auto_load_more_enabled { get; set; }
+            public bool showQRModal { get; set; }
         }
 
         public class SharingFrictionInfo
         {
             public bool should_have_sharing_friction { get; set; }
             public object bloks_app_url { get; set; }
-        }
-
-        public class ThumbnailResource
-        {
-            public string src { get; set; }
-            public int config_width { get; set; }
-            public int config_height { get; set; }
+            public object sharing_friction_payload { get; set; }
         }
 
         public class User
         {
-            public string biography { get; set; }
-            public List<object> bio_links { get; set; }
-            public BiographyWithEntities biography_with_entities { get; set; }
-            public bool blocked_by_viewer { get; set; }
-            public bool restricted_by_viewer { get; set; }
-            public bool country_block { get; set; }
-            public object external_url { get; set; }
-            public object external_url_linkshimmed { get; set; }
-            public EdgeFollowedBy edge_followed_by { get; set; }
-            public string fbid { get; set; }
-            public bool followed_by_viewer { get; set; }
-            public EdgeFollow edge_follow { get; set; }
-            public bool follows_viewer { get; set; }
-            public string full_name { get; set; }
-            public object group_metadata { get; set; }
-            public bool has_ar_effects { get; set; }
-            public bool has_clips { get; set; }
-            public bool has_guides { get; set; }
-            public bool has_channel { get; set; }
-            public bool has_blocked_viewer { get; set; }
-            public int highlight_reel_count { get; set; }
-            public bool has_requested_viewer { get; set; }
-            public bool hide_like_and_view_counts { get; set; }
-            public string id { get; set; }
-            public bool is_business_account { get; set; }
-            public bool is_eligible_to_view_account_transparency { get; set; }
-            public bool is_professional_account { get; set; }
-            public bool is_supervision_enabled { get; set; }
-            public bool is_guardian_of_viewer { get; set; }
-            public bool is_supervised_by_viewer { get; set; }
-            public bool is_supervised_user { get; set; }
-            public bool is_embeds_disabled { get; set; }
-            public bool is_joined_recently { get; set; }
-            public object guardian_id { get; set; }
-            public object business_address_json { get; set; }
-            public string business_contact_method { get; set; }
-            public object business_email { get; set; }
-            public object business_phone_number { get; set; }
-            public object business_category_name { get; set; }
-            public object overall_category_name { get; set; }
-            public object category_enum { get; set; }
-            public string category_name { get; set; }
-            public bool is_private { get; set; }
-            public bool is_verified { get; set; }
-            public EdgeMutualFollowedBy edge_mutual_followed_by { get; set; }
-            public string profile_pic_url { get; set; }
-            public string profile_pic_url_hd { get; set; }
-            public bool requested_by_viewer { get; set; }
-            public bool should_show_category { get; set; }
-            public bool should_show_public_contacts { get; set; }
-            public object transparency_label { get; set; }
-            public string transparency_product { get; set; }
+            public int pk { get; set; }
             public string username { get; set; }
-            public object connected_fb_page { get; set; }
-            public List<object> pronouns { get; set; }
-            public EdgeFelixVideoTimeline edge_felix_video_timeline { get; set; }
-            public EdgeOwnerToTimelineMedia edge_owner_to_timeline_media { get; set; }
-            public EdgeSavedMedia edge_saved_media { get; set; }
-            public EdgeMediaCollections edge_media_collections { get; set; }
+            public string profile_pic_url { get; set; }
+            public string profile_pic_id { get; set; }
+            public FriendshipStatus friendship_status { get; set; }
+            public bool is_verified { get; set; }
+            public string full_name { get; set; }
+            public string pk_id { get; set; }
+            public bool is_private { get; set; }
+            public bool has_anonymous_profile_picture { get; set; }
+            public bool is_unpublished { get; set; }
+            public bool is_favorite { get; set; }
+            public int latest_reel_media { get; set; }
+            public bool has_highlight_reels { get; set; }
+            public bool show_account_transparency_details { get; set; }
+            public FanClubInfo fan_club_info { get; set; }
+            public List<object> account_badges { get; set; }
+            public bool transparency_product_enabled { get; set; }
         }
+
+
     }
 }

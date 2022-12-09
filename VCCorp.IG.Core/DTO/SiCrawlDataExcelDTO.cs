@@ -18,6 +18,10 @@ namespace VCCorp.IG.Core.DTO
         public int Status { get; set; }
         public int Type { get; set; }
         public string Link { get; set; }
+
+        public string LinkCrawl { get; set; }//ohter
+        public string ShortCode { get; set; }//ohther
+        public string ProfileId { get; set; }//oither
         public string Platform { get; set; }
         public int Topic { get; set; }
         public string TopicName { get; set; }

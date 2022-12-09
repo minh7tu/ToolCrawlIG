@@ -13,8 +13,15 @@ namespace VCCorp.IG.Core.DTO
         public string PostId { get; set; }
         public string Platform { get; set; }
         public string Link { get; set; }
-        public string ShortCode { get; set; }//other
-        public string LinkCrawler { get; set; }//other
+        #region Other
+        public string ShortCode { get; set; }
+        public string LinkCrawler { get; set; }
+        public string UserId { get; set; }
+        public string NameUser { get; set; }
+        public string Fullname { get; set; }
+        public string ProfilePicUrl { get; set; }
+        public string ImagePost { get; set; }
+        #endregion
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
         public DateTime CrawledTime { get; set; }
