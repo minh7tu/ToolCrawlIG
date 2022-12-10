@@ -37,6 +37,7 @@ namespace VCCorp.IG.WinForm
         static int _countCmt = 0;
         static int _countCmtDetail = 0;
         static int _countPost = 0;
+        int _flag;
         //int _flag;//đánh cờ để chạy
         #endregion
 
@@ -138,8 +139,258 @@ namespace VCCorp.IG.WinForm
             }
         }
 
-        //Bóc lấy bài post
         private void btnCrawlerPost_Click(object sender, EventArgs e)
+        {
+            CrawlerSDSPost();
+        }
+
+        //Login vào Ig
+        private void btnLoginIG_Click(object sender, EventArgs e)
+        {
+            InitBrowser();
+        }
+
+        //Khởi tạo cefsharp login lưu cache IG
+        private void InitBrowser()
+        {
+            if (!CefSharp.Cef.IsInitialized)
+            {
+                if (!Directory.Exists(_pathCache))
+                {
+                    Directory.CreateDirectory(_pathCache);
+                }
+
+                CefSharp.WinForms.CefSettings settings = new CefSharp.WinForms.CefSettings();
+                settings.CachePath = _pathCache;
+                settings.LogSeverity = LogSeverity.Disable;
+
+                CefSharp.Cef.Initialize(settings);
+            }
+
+            _browser = new ChromiumWebBrowser("https://www.instagram.com/");
+            this.pnlCefsharp.Controls.Add(_browser);
+        }
+
+        //Cập nhập source id null
+        private void btnGetSourceId_Click(object sender, EventArgs e)
+        {
+            SiDemandSourceDTO dto = new SiDemandSourceDTO();
+            SiDemandSourceBUS bus = new SiDemandSourceBUS();
+
+            GetSourceIdNull();
+
+            string source;
+
+            foreach (var item in _listSourceIdNull)
+            {
+                dto.Id = item.Id;
+                _browser.Load(item.Link);
+                txtResutlUrl.Text = item.Link;
+                source = GetSourceFromBrowser();
+
+                source = Regex.Replace(source, "(<html)(.*?)(pre-wrap;\">)", "", RegexOptions.IgnoreCase); // xóa cặp thẻ
+                source = Regex.Replace(source, "</pre></body></html>", "", RegexOptions.IgnoreCase);
+                var ObjRoot = JsonConvert.DeserializeObject<Core.DTO.JsonToObjectIG.SourceId.Root>(source);
+
+                if (ObjRoot != null)
+                {
+                    dto.SourceId = ObjRoot.graphql.user.id;
+                    if (string.IsNullOrEmpty(dto.SourceId))
+                    {
+                        //bus.Update(dto.Id.ToString(), dto.SourceId);//Cập nhập lại source id khi nó bị null trong bảng si_demand_source khi thành công
+                    }
+                    else
+                    {
+                        rtxtDisplayResult.AppendText(dto.Id.ToString());
+                        //dto.SourceId = "-1";
+                        //bus.Update(dto.Id.ToString(), dto.SourceId);//cập nhập lại source id null trong bảng si_demand_source khi lỗi
+                    }
+
+                }
+
+            }
+        }
+
+        //Lấy source từ trình duyệt
+        private string GetSourceFromBrowser()
+        {
+            var task1 = _browser.GetSourceAsync();
+            task1.Wait();
+            string source = task1.Result;
+            return source;
+        }
+
+        //Lấy danh sách source id null trong Db si_demand_source
+        private void GetSourceIdNull()
+        {
+            SiDemandSourceBUS source = new SiDemandSourceBUS();
+
+            _listSourceIdNull = source.GetListNullIdSource();
+
+            if (_listSourceIdNull.Count < 1)
+            {
+                btnGetSourceId.Enabled = false;
+            }
+
+        }
+
+        private void frmListSource_Load(object sender, EventArgs e)
+        {
+            GetSourceIdNull();
+            lblStatus.Text = "xin chao";
+        }
+
+        private void btnCrawlerComment_Click(object sender, EventArgs e)
+        {
+            CrawlerSDSComment();
+        }
+        
+        private void btnFresh_Click(object sender, EventArgs e)
+        {
+            rtxtDisplayResult.Clear();
+        }
+
+        private void btnSCDEComment_Click(object sender, EventArgs e)
+        {
+            CrawlerSCDEComment();
+        }
+
+        private void btnSCDEPost_Click(object sender, EventArgs e)
+        {
+            CrawlerSCDEPost();
+        }
+
+        //Bóc post của bảng si_crawl_data_excel
+        private void CrawlerSCDEPost()
+        {
+            SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
+
+            _listPostSCDE = bus.GetListPost();//Lấy danh sách status = 0 trong bảng si_crawl_data_excel
+
+            foreach (var item in _listPostSCDE)
+            {
+                _browser.Load(item.LinkCrawl);
+                txtResutlUrl.Text = item.LinkCrawl;
+                Thread.Sleep(6000);
+                txtResutlUrl.Text = item.LinkCrawl;
+                //bus.Update(item.Id, "", 1);//Cập nhập trạng thái trên bảng si_crawl_data_excel đang bóc
+                string source = GetSourceFromBrowser();
+
+                source = Regex.Replace(source, "(<html)(.*?)(pre-wrap;\">)", "", RegexOptions.IgnoreCase); // xóa cặp thẻ
+                source = Regex.Replace(source, "</pre></body></html>", "", RegexOptions.IgnoreCase);
+
+                var profileRoot = JsonConvert.DeserializeObject<SourceA1.Root>(source);
+
+                if (profileRoot != null && profileRoot.items != null)
+                {
+                    foreach (var data in profileRoot.items)
+                    {
+                        SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
+
+                        dto.SiDemandSourceId = item.Id;
+                        dto.PostId = data.id;
+                        dto.ShortCode = data.code;
+                        dto.Link = "https://www.instagram.com/p/" + dto.ShortCode;
+                        dto.TotalComment = data.comment_count;
+                        dto.TotalLike = data.like_count;
+                        dto.Content = data.caption.text;
+                        dto.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.caption.created_at);
+                        dto.UpdateTime = DateTime.Now;
+                        dto.UserId = data.user.pk.ToString();
+                        dto.NameUser = data.user.username;
+                        dto.Fullname = data.user.full_name;
+                        dto.ProfilePicUrl = data.user.profile_pic_url;
+                        dto.ImagePost = "";
+
+                        rtxtDisplayResult.AppendText(dto.Content + "\n");
+                        //Đưa vào db si_excel_history
+
+                        //bắn lên kafka
+                        KafaPostDTO kafka = new KafaPostDTO();
+                        kafka.Id = dto.PostId;
+                        kafka.Message = dto.Content;
+                        kafka.ShortCode = dto.ShortCode;
+                        kafka.Link = dto.Link;
+                        kafka.TotalComment = dto.TotalComment;
+                        kafka.TotalLike = dto.TotalLike;
+                        kafka.TotalShare = 0;
+                        kafka.TotalReaction = 0;
+                        kafka.ImagePost = dto.ImagePost;
+                        kafka.Platform = dto.Platform;
+                        kafka.CreateTime = dto.CreateTime;
+                        kafka.UpdateTime = DateTime.Now;
+                        kafka.TmpTime = data.caption.created_at;
+                        kafka.UserId = dto.UserId;
+                        kafka.Username = "";
+                        kafka.ImageUser = "";
+
+                    }
+                    // bus.Update(item.Id, "", 3);//Cập nhập trạng thái trên bảng si_crawl_data_excel đã bóc xong chờ bóc comment
+                }
+                else
+                {
+                    //bus.Update(item.Id, "", -1);//Cập nhập trạng thái trên bảng si_crawl_data_excel lỗi
+                }
+
+            }
+        }
+
+        //Bóc comment của bảng si_crawl_data_excel
+        private void CrawlerSCDEComment()
+        {
+            SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
+            _listCommentSCDE = bus.GetListComment();//Lấy danh sách
+
+            foreach (var item in _listCommentSCDE)
+            {
+                string linkcrawl = "https://www.instagram.com/graphql/query/?query_hash=33ba35852cb50da46f5b5e889df7d159&variables=%7B%22shortcode%22:%22" + item.ShortCode + "%22,%22first%22:100,%22after%22:%22%22%7D";
+                _browser.Load(linkcrawl);
+                Thread.Sleep(6000);
+                txtResutlUrl.Text = linkcrawl;
+
+                string source = GetSourceFromBrowser();
+                //bus.Update(item.Id, "", 1);//Cập nhập trạng thái trên bảng si_crawl_data_excel đang bóc
+                source = Regex.Replace(source, "(<html)(.*?)(pre-wrap;\">)", " ", RegexOptions.IgnoreCase); // xóa cặp thẻ
+                source = Regex.Replace(source, "</pre></body></html>", "", RegexOptions.IgnoreCase);
+
+                var objRoot = JsonConvert.DeserializeObject<CommentOfPost.Root>(source);
+
+                if (objRoot != null && objRoot.data != null)
+                {
+                    foreach (var data in objRoot.data.shortcode_media.edge_media_to_comment.edges)
+                    {
+                        KafkaComment cmt = new KafkaComment();
+
+                        //kafka - lấy dữ liệu từ bảng si_demand_source_post
+                        cmt.PostId = item.PostId;
+                        cmt.Url = item.Link;
+                        //Kafka
+                        cmt.CommentId = data.node.id;
+                        cmt.CommentText = data.node.text;
+                        cmt.OwnerId = data.node.owner.id;
+                        cmt.OwnerUser = data.node.owner.username;
+                        cmt.OwnerProfilePicUrl = data.node.owner.profile_pic_url;
+                        cmt.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.node.created_at);
+
+                        //Đưa vào list và bắn lên kafka
+                        _listComment.Add(cmt);
+
+                        _countCmtDetail += 1;
+
+                        rtxtDisplayResult.AppendText(_countCmtDetail.ToString() + "\t" + cmt.CommentText + "\n");
+
+                    }
+                    //bus.Update(item.Id, "", 2);//Cập nhập trạng thái trên bảng si_crawl_data_excel bóc thành công
+                }
+                else
+                {
+                    //bus.Update(item.Id, "", -2);//Cập nhập trạng thái trên bảng si_crawl_data_excel không bóc được comment
+                }
+            }
+        }
+
+        //Bóc post từ bảng si_demand_source
+        private void CrawlerSDSPost()
         {
             GetListSiDemandSource();
 
@@ -241,8 +492,8 @@ namespace VCCorp.IG.WinForm
 
             }
         }
-
-        //Lấy dữ liệu trang post tiếp
+        
+        //Bóc trang tiếp của post hiện tại bảng si_demand_)source
         private void Endursor(string UserId, string nextPage)
         {
             SiDemandSourceBUS bus = new SiDemandSourceBUS();
@@ -326,103 +577,8 @@ namespace VCCorp.IG.WinForm
             }
         }
 
-        //Login vào Ig
-        private void btnLoginIG_Click(object sender, EventArgs e)
-        {
-            InitBrowser();
-        }
-
-        //Khởi tạo cefsharp
-        private void InitBrowser()
-        {
-            if (!CefSharp.Cef.IsInitialized)
-            {
-                if (!Directory.Exists(_pathCache))
-                {
-                    Directory.CreateDirectory(_pathCache);
-                }
-
-                CefSharp.WinForms.CefSettings settings = new CefSharp.WinForms.CefSettings();
-                settings.CachePath = _pathCache;
-                settings.LogSeverity = LogSeverity.Disable;
-
-                CefSharp.Cef.Initialize(settings);
-            }
-
-            _browser = new ChromiumWebBrowser("https://www.instagram.com/");
-            this.pnlCefsharp.Controls.Add(_browser);
-        }
-
-        //Cập nhập source id null
-        private void btnGetSourceId_Click(object sender, EventArgs e)
-        {
-            SiDemandSourceDTO dto = new SiDemandSourceDTO();
-            SiDemandSourceBUS bus = new SiDemandSourceBUS();
-
-            GetSourceIdNull();
-
-            string source;
-
-            foreach (var item in _listSourceIdNull)
-            {
-                dto.Id = item.Id;
-                _browser.Load(item.Link);
-                txtResutlUrl.Text = item.Link;
-                source = GetSourceFromBrowser();
-
-                source = Regex.Replace(source, "(<html)(.*?)(pre-wrap;\">)", "", RegexOptions.IgnoreCase); // xóa cặp thẻ
-                source = Regex.Replace(source, "</pre></body></html>", "", RegexOptions.IgnoreCase);
-                var ObjRoot = JsonConvert.DeserializeObject<Core.DTO.JsonToObjectIG.SourceId.Root>(source);
-
-                if (ObjRoot != null)
-                {
-                    dto.SourceId = ObjRoot.graphql.user.id;
-                    if (string.IsNullOrEmpty(dto.SourceId))
-                    {
-                        //bus.Update(dto.Id.ToString(), dto.SourceId);//Cập nhập lại source id khi nó bị null trong bảng si_demand_source khi thành công
-                    }
-                    else
-                    {
-                        rtxtDisplayResult.AppendText(dto.Id.ToString());
-                        //dto.SourceId = "-1";
-                        //bus.Update(dto.Id.ToString(), dto.SourceId);//cập nhập lại source id null trong bảng si_demand_source khi lỗi
-                    }
-
-                }
-
-            }
-        }
-
-        //Lấy source từ trình duyệt
-        private string GetSourceFromBrowser()
-        {
-            var task1 = _browser.GetSourceAsync();
-            task1.Wait();
-            string source = task1.Result;
-            return source;
-        }
-
-        //Lấy danh sách source id null trong Db si_demand_source
-        private void GetSourceIdNull()
-        {
-            SiDemandSourceBUS source = new SiDemandSourceBUS();
-
-            _listSourceIdNull = source.GetListNullIdSource();
-
-            if (_listSourceIdNull.Count < 1)
-            {
-                btnGetSourceId.Enabled = false;
-            }
-
-        }
-
-        private void frmListSource_Load(object sender, EventArgs e)
-        {
-            GetSourceIdNull();
-        }
-
-        //Bóc từng bài rồi lấy comment
-        private void btnCrawlerComment_Click(object sender, EventArgs e)
+        //Bóc comment từ bảng si_demand_source_post
+        private void CrawlerSDSComment()
         {
             SiDemandSourcePostBUS bus = new SiDemandSourcePostBUS();
             //SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
@@ -493,12 +649,12 @@ namespace VCCorp.IG.WinForm
             lblSum.Text = countCmt.ToString();
         }
 
-        //Bóc comment tiếp
+        //Bóc comment của bảng si_demand_source_post (phân trang)
         private void EndursorComment(string shortCode, string nextPage)
         {
             SiDemandSourcePostBUS bus = new SiDemandSourcePostBUS();
             //SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
-           
+
 
 
             _listPost = bus.GetListSourcePost();
@@ -565,139 +721,15 @@ namespace VCCorp.IG.WinForm
             }
 
         }
-        //Làm mới lại tiện ích
-        private void btnFresh_Click(object sender, EventArgs e)
+
+        private void btnAuto_Click(object sender, EventArgs e)
         {
-            rtxtDisplayResult.Clear();
+            
         }
 
-        //Bóc comment của bảng si_craw_data_excel
-        private void btnSCDEComment_Click(object sender, EventArgs e)
+        private void timeStart_Tick(object sender, EventArgs e)
         {
-            SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
-            _listCommentSCDE = bus.GetListComment();//Lấy danh sách
-
-            foreach (var item in _listCommentSCDE)
-            {
-                string linkcrawl = "https://www.instagram.com/graphql/query/?query_hash=33ba35852cb50da46f5b5e889df7d159&variables=%7B%22shortcode%22:%22" + item.ShortCode + "%22,%22first%22:100,%22after%22:%22%22%7D";
-                _browser.Load(linkcrawl);
-                Thread.Sleep(6000);
-                txtResutlUrl.Text = linkcrawl;
-
-                string source = GetSourceFromBrowser();
-                //bus.Update(item.Id, "", 1);//Cập nhập trạng thái trên bảng si_crawl_data_excel đang bóc
-                source = Regex.Replace(source, "(<html)(.*?)(pre-wrap;\">)", " ", RegexOptions.IgnoreCase); // xóa cặp thẻ
-                source = Regex.Replace(source, "</pre></body></html>", "", RegexOptions.IgnoreCase);
-
-                var objRoot = JsonConvert.DeserializeObject<CommentOfPost.Root>(source);
-
-                if (objRoot != null && objRoot.data != null)
-                {
-                    foreach (var data in objRoot.data.shortcode_media.edge_media_to_comment.edges)
-                    {
-                        KafkaComment cmt = new KafkaComment();
-
-                        //kafka - lấy dữ liệu từ bảng si_demand_source_post
-                        cmt.PostId = item.PostId;
-                        cmt.Url = item.Link;
-                        //Kafka
-                        cmt.CommentId = data.node.id;
-                        cmt.CommentText = data.node.text;
-                        cmt.OwnerId = data.node.owner.id;
-                        cmt.OwnerUser = data.node.owner.username;
-                        cmt.OwnerProfilePicUrl = data.node.owner.profile_pic_url;
-                        cmt.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.node.created_at);
-
-                        //Đưa vào list và bắn lên kafka
-                        _listComment.Add(cmt);
-
-                        _countCmtDetail += 1;
-
-                        rtxtDisplayResult.AppendText(_countCmtDetail.ToString() + "\t" + cmt.CommentText + "\n");
-
-                    }
-                    //bus.Update(item.Id, "", 2);//Cập nhập trạng thái trên bảng si_crawl_data_excel bóc thành công
-                }
-                else
-                {
-                    //bus.Update(item.Id, "", -2);//Cập nhập trạng thái trên bảng si_crawl_data_excel không bóc được comment
-                }
-            }
-        }
-
-        //Bóc post của bảng si_craw_data_excel
-        private void btnSCDEPost_Click(object sender, EventArgs e)
-        {
-            SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
-
-            _listPostSCDE = bus.GetListPost();//Lấy danh sách status = 0 trong bảng si_crawl_data_excel
-
-            foreach (var item in _listPostSCDE)
-            {
-                _browser.Load(item.LinkCrawl);
-                txtResutlUrl.Text = item.LinkCrawl;
-                Thread.Sleep(6000);
-                txtResutlUrl.Text = item.LinkCrawl;
-                //bus.Update(item.Id, "", 1);//Cập nhập trạng thái trên bảng si_crawl_data_excel đang bóc
-                string source = GetSourceFromBrowser();
-
-                source = Regex.Replace(source, "(<html)(.*?)(pre-wrap;\">)", "", RegexOptions.IgnoreCase); // xóa cặp thẻ
-                source = Regex.Replace(source, "</pre></body></html>", "", RegexOptions.IgnoreCase);
-
-                var profileRoot = JsonConvert.DeserializeObject<SourceA1.Root>(source);
-
-                if (profileRoot != null && profileRoot.items != null)
-                {
-                    foreach (var data in profileRoot.items)
-                    {
-                        SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
-
-                        dto.SiDemandSourceId = item.Id;
-                        dto.PostId = data.id;
-                        dto.ShortCode = data.code;
-                        dto.Link = "https://www.instagram.com/p/" + dto.ShortCode;
-                        dto.TotalComment = data.comment_count;
-                        dto.TotalLike = data.like_count;
-                        dto.Content = data.caption.text;
-                        dto.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.caption.created_at);
-                        dto.UpdateTime = DateTime.Now;
-                        dto.UserId = data.user.pk.ToString();
-                        dto.NameUser = data.user.username;
-                        dto.Fullname = data.user.full_name;
-                        dto.ProfilePicUrl = data.user.profile_pic_url;
-                        dto.ImagePost = "";
-
-                        rtxtDisplayResult.AppendText(dto.Content + "\n");
-                        //Đưa vào db si_excel_history
-
-                        //bắn lên kafka
-                        KafaPostDTO kafka = new KafaPostDTO();
-                        kafka.Id = dto.PostId;
-                        kafka.Message = dto.Content;
-                        kafka.ShortCode = dto.ShortCode;
-                        kafka.Link = dto.Link;
-                        kafka.TotalComment = dto.TotalComment;
-                        kafka.TotalLike = dto.TotalLike;
-                        kafka.TotalShare = 0;
-                        kafka.TotalReaction = 0;
-                        kafka.ImagePost = dto.ImagePost;
-                        kafka.Platform = dto.Platform;
-                        kafka.CreateTime = dto.CreateTime;
-                        kafka.UpdateTime = DateTime.Now;
-                        kafka.TmpTime = data.caption.created_at;
-                        kafka.UserId = dto.UserId;
-                        kafka.Username = "";
-                        kafka.ImageUser = "";
-
-                    }
-                    // bus.Update(item.Id, "", 3);//Cập nhập trạng thái trên bảng si_crawl_data_excel đã bóc xong chờ bóc comment
-                }
-                else
-                {
-                    //bus.Update(item.Id, "", -1);//Cập nhập trạng thái trên bảng si_crawl_data_excel lỗi
-                }
-
-            }
+            
         }
     }
 }

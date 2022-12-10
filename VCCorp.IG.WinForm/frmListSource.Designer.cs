@@ -29,6 +29,7 @@ namespace VCCorp.IG.WinForm
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.rtxtDisplayResult = new System.Windows.Forms.RichTextBox();
             this.txtOptions = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -41,9 +42,11 @@ namespace VCCorp.IG.WinForm
             this.btnFresh = new System.Windows.Forms.Button();
             this.btnCrawlerPost = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnSCDEPost = new System.Windows.Forms.Button();
             this.btnSCDEComment = new System.Windows.Forms.Button();
             this.btnCrawlerComment = new System.Windows.Forms.Button();
             this.pnlCefsharp = new System.Windows.Forms.Panel();
+            this.lblStatus = new System.Windows.Forms.StatusStrip();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.lblError = new System.Windows.Forms.Label();
             this.lblOk = new System.Windows.Forms.Label();
@@ -53,10 +56,11 @@ namespace VCCorp.IG.WinForm
             this.label2 = new System.Windows.Forms.Label();
             this.txtResutlUrl = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.btnSCDEPost = new System.Windows.Forms.Button();
+            this.timeStart = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.pnlCefsharp.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
@@ -135,6 +139,7 @@ namespace VCCorp.IG.WinForm
             this.btnAuto.TabIndex = 12;
             this.btnAuto.Text = "Tự động";
             this.btnAuto.UseVisualStyleBackColor = true;
+            this.btnAuto.Click += new System.EventHandler(this.btnAuto_Click);
             // 
             // groupBox2
             // 
@@ -179,6 +184,16 @@ namespace VCCorp.IG.WinForm
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Post";
             // 
+            // btnSCDEPost
+            // 
+            this.btnSCDEPost.Location = new System.Drawing.Point(24, 72);
+            this.btnSCDEPost.Name = "btnSCDEPost";
+            this.btnSCDEPost.Size = new System.Drawing.Size(169, 37);
+            this.btnSCDEPost.TabIndex = 13;
+            this.btnSCDEPost.Text = "Si_Crawl_Data_Excel";
+            this.btnSCDEPost.UseVisualStyleBackColor = true;
+            this.btnSCDEPost.Click += new System.EventHandler(this.btnSCDEPost_Click);
+            // 
             // btnSCDEComment
             // 
             this.btnSCDEComment.Location = new System.Drawing.Point(26, 62);
@@ -201,10 +216,19 @@ namespace VCCorp.IG.WinForm
             // 
             // pnlCefsharp
             // 
+            this.pnlCefsharp.Controls.Add(this.lblStatus);
             this.pnlCefsharp.Location = new System.Drawing.Point(12, 243);
             this.pnlCefsharp.Name = "pnlCefsharp";
             this.pnlCefsharp.Size = new System.Drawing.Size(519, 407);
             this.pnlCefsharp.TabIndex = 12;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Location = new System.Drawing.Point(0, 385);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(519, 22);
+            this.lblStatus.TabIndex = 0;
+            this.lblStatus.Text = "statusStrip1";
             // 
             // groupBox4
             // 
@@ -293,15 +317,9 @@ namespace VCCorp.IG.WinForm
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Crawl Comment";
             // 
-            // btnSCDEPost
+            // timeStart
             // 
-            this.btnSCDEPost.Location = new System.Drawing.Point(24, 72);
-            this.btnSCDEPost.Name = "btnSCDEPost";
-            this.btnSCDEPost.Size = new System.Drawing.Size(169, 37);
-            this.btnSCDEPost.TabIndex = 13;
-            this.btnSCDEPost.Text = "Si_Crawl_Data_Excel";
-            this.btnSCDEPost.UseVisualStyleBackColor = true;
-            this.btnSCDEPost.Click += new System.EventHandler(this.btnSCDEPost_Click);
+            this.timeStart.Tick += new System.EventHandler(this.timeStart_Tick);
             // 
             // frmListSource
             // 
@@ -324,6 +342,8 @@ namespace VCCorp.IG.WinForm
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.pnlCefsharp.ResumeLayout(false);
+            this.pnlCefsharp.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -358,5 +378,7 @@ namespace VCCorp.IG.WinForm
         private System.Windows.Forms.Button btnSCDEComment;
         private System.Windows.Forms.Button btnSCDEPost;
         private System.Windows.Forms.Button btnFresh;
+        private System.Windows.Forms.Timer timeStart;
+        private System.Windows.Forms.StatusStrip lblStatus;
     }
 }
