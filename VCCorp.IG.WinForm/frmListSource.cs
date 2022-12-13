@@ -38,6 +38,7 @@ namespace VCCorp.IG.WinForm
         static int _countCmtDetail = 0;
         static int _countPost = 0;
         int _flag;
+        int _load;
         //int _flag;//đánh cờ để chạy
         #endregion
 
@@ -49,7 +50,15 @@ namespace VCCorp.IG.WinForm
                 btnLoginIG.Enabled = false;
             }
             InitBrowser();
-
+            //_load = 1;
+            _flag = 1;
+            GetListSiDemandSource();
+            GetListSCDEPost();
+            GetListSCDEComment();
+            txtStatusTooltip.Text = "Đã login tài khoản IG. Hệ thống sẽ tiến hành chạy tự động trong vòng vài giây...";
+            //timeStart.Interval = 1000 * 10;
+            timeStart.Enabled = true;
+            
         }
 
         //Lấy danh sách source trong bảng si_demand_source
@@ -59,10 +68,12 @@ namespace VCCorp.IG.WinForm
             //SiDemandSourceDTO dto = new SiDemandSourceDTO();
 
             int i = 1;
+            txtOptions.Text = Convert.ToString("2");
 
             try
             {
                 _listSource = source?.GetList(Convert.ToInt32(txtOptions.Text));
+                
             }
             catch
             {
@@ -158,7 +169,15 @@ namespace VCCorp.IG.WinForm
                 if (!Directory.Exists(_pathCache))
                 {
                     Directory.CreateDirectory(_pathCache);
+                    _load = 0; //Đánh dấu trạng thái chưa login vào IG
+                    
                 }
+                else
+                {
+                   
+                    _load = 1;//Đánh dấu trạng thái đã login
+                    
+                }    
 
                 CefSharp.WinForms.CefSettings settings = new CefSharp.WinForms.CefSettings();
                 settings.CachePath = _pathCache;
@@ -167,8 +186,12 @@ namespace VCCorp.IG.WinForm
                 CefSharp.Cef.Initialize(settings);
             }
 
+            
             _browser = new ChromiumWebBrowser("https://www.instagram.com/");
+            
             this.pnlCefsharp.Controls.Add(_browser);
+
+            //_load = 0; //Đánh dấu trạng thái đang login vào IG
         }
 
         //Cập nhập source id null
@@ -216,6 +239,7 @@ namespace VCCorp.IG.WinForm
         {
             var task1 = _browser.GetSourceAsync();
             task1.Wait();
+
             string source = task1.Result;
             return source;
         }
@@ -237,7 +261,9 @@ namespace VCCorp.IG.WinForm
         private void frmListSource_Load(object sender, EventArgs e)
         {
             GetSourceIdNull();
-            lblStatus.Text = "xin chao";
+
+            
+
         }
 
         private void btnCrawlerComment_Click(object sender, EventArgs e)
@@ -247,7 +273,8 @@ namespace VCCorp.IG.WinForm
         
         private void btnFresh_Click(object sender, EventArgs e)
         {
-            rtxtDisplayResult.Clear();
+           
+            
         }
 
         private void btnSCDEComment_Click(object sender, EventArgs e)
@@ -260,19 +287,36 @@ namespace VCCorp.IG.WinForm
             CrawlerSCDEPost();
         }
 
-        //Bóc post của bảng si_crawl_data_excel
-        private void CrawlerSCDEPost()
+        //Lấy danh sách link trong bảng si_crawl_data_excel
+        private void GetListSCDEPost()
         {
             SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
 
             _listPostSCDE = bus.GetListPost();//Lấy danh sách status = 0 trong bảng si_crawl_data_excel
+        }
+
+        private void GetListSCDEComment()
+        {
+            SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
+            _listCommentSCDE = bus.GetListComment();//Lấy danh sách
+        }
+
+        //Bóc post của bảng si_crawl_data_excel
+        private void CrawlerSCDEPost()
+        {
+            int dem = 1;
+            //SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
+
+            //_listPostSCDE = bus.GetListPost();//Lấy danh sách status = 0 trong bảng si_crawl_data_excel
 
             foreach (var item in _listPostSCDE)
             {
+                
                 _browser.Load(item.LinkCrawl);
-                txtResutlUrl.Text = item.LinkCrawl;
+                
                 Thread.Sleep(6000);
-                txtResutlUrl.Text = item.LinkCrawl;
+               
+                //txtResutlUrl.Text = item.LinkCrawl;
                 //bus.Update(item.Id, "", 1);//Cập nhập trạng thái trên bảng si_crawl_data_excel đang bóc
                 string source = GetSourceFromBrowser();
 
@@ -283,6 +327,8 @@ namespace VCCorp.IG.WinForm
 
                 if (profileRoot != null && profileRoot.items != null)
                 {
+                    dem += 1;
+
                     foreach (var data in profileRoot.items)
                     {
                         SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
@@ -302,7 +348,8 @@ namespace VCCorp.IG.WinForm
                         dto.ProfilePicUrl = data.user.profile_pic_url;
                         dto.ImagePost = "";
 
-                        rtxtDisplayResult.AppendText(dto.Content + "\n");
+                        
+                        //rtxtDisplayResult.AppendText(dto.Content + "\n");
                         //Đưa vào db si_excel_history
 
                         //bắn lên kafka
@@ -324,6 +371,7 @@ namespace VCCorp.IG.WinForm
                         kafka.Username = "";
                         kafka.ImageUser = "";
 
+                       
                     }
                     // bus.Update(item.Id, "", 3);//Cập nhập trạng thái trên bảng si_crawl_data_excel đã bóc xong chờ bóc comment
                 }
@@ -331,22 +379,26 @@ namespace VCCorp.IG.WinForm
                 {
                     //bus.Update(item.Id, "", -1);//Cập nhập trạng thái trên bảng si_crawl_data_excel lỗi
                 }
-
+                txtStatusTooltip.Text = "Bóc post bảng si_crawl_data_excel: " + dem ;
+                Thread.Sleep(10000);
             }
+
+            
         }
 
         //Bóc comment của bảng si_crawl_data_excel
         private void CrawlerSCDEComment()
         {
-            SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
-            _listCommentSCDE = bus.GetListComment();//Lấy danh sách
+            //SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
+            //_listCommentSCDE = bus.GetListComment();//Lấy danh sách
+            int dem = 1;
 
             foreach (var item in _listCommentSCDE)
             {
                 string linkcrawl = "https://www.instagram.com/graphql/query/?query_hash=33ba35852cb50da46f5b5e889df7d159&variables=%7B%22shortcode%22:%22" + item.ShortCode + "%22,%22first%22:100,%22after%22:%22%22%7D";
                 _browser.Load(linkcrawl);
                 Thread.Sleep(6000);
-                txtResutlUrl.Text = linkcrawl;
+                //txtResutlUrl.Text = linkcrawl;
 
                 string source = GetSourceFromBrowser();
                 //bus.Update(item.Id, "", 1);//Cập nhập trạng thái trên bảng si_crawl_data_excel đang bóc
@@ -357,6 +409,8 @@ namespace VCCorp.IG.WinForm
 
                 if (objRoot != null && objRoot.data != null)
                 {
+                    dem += 1;
+                    
                     foreach (var data in objRoot.data.shortcode_media.edge_media_to_comment.edges)
                     {
                         KafkaComment cmt = new KafkaComment();
@@ -377,7 +431,7 @@ namespace VCCorp.IG.WinForm
 
                         _countCmtDetail += 1;
 
-                        rtxtDisplayResult.AppendText(_countCmtDetail.ToString() + "\t" + cmt.CommentText + "\n");
+                        //rtxtDisplayResult.AppendText(_countCmtDetail.ToString() + "\t" + cmt.CommentText + "\n");
 
                     }
                     //bus.Update(item.Id, "", 2);//Cập nhập trạng thái trên bảng si_crawl_data_excel bóc thành công
@@ -386,13 +440,19 @@ namespace VCCorp.IG.WinForm
                 {
                     //bus.Update(item.Id, "", -2);//Cập nhập trạng thái trên bảng si_crawl_data_excel không bóc được comment
                 }
+                txtStatusTooltip.Text = "Bóc comment bảng si_crawl_data_excel: " + dem;
+                Thread.Sleep(10000);
             }
+
+            _flag = 10;
         }
 
         //Bóc post từ bảng si_demand_source
         private void CrawlerSDSPost()
         {
-            GetListSiDemandSource();
+            //GetListSiDemandSource();
+
+            txtStatusTooltip.Text = "Đang thực hiện bóc Post từ bảng Si_Demand_Source";
 
             SiDemandSourceBUS bus = new SiDemandSourceBUS();
 
@@ -489,7 +549,7 @@ namespace VCCorp.IG.WinForm
                     //bus.Update(item.Id.ToString(), "-1", "", "","");//cập nhập trạng thái là bóc lỗi trong bảng si_demand_source
                 }
 
-
+                txtStatusTooltip.Text = "Đã xong";
             }
         }
         
@@ -498,7 +558,7 @@ namespace VCCorp.IG.WinForm
         {
             SiDemandSourceBUS bus = new SiDemandSourceBUS();
             SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
-
+            
             foreach (var item in _listSource)
             {
                 string urlpage = "https://www.instagram.com/graphql/query/?query_hash=472f257a40c653c64c666ce877d59d2b&variables={%22id%22:%22" + UserId + "%22,%22first%22:50,%22after%22:%22" + nextPage + "%22}";
@@ -580,6 +640,8 @@ namespace VCCorp.IG.WinForm
         //Bóc comment từ bảng si_demand_source_post
         private void CrawlerSDSComment()
         {
+            txtStatusTooltip.Text = "Đang bóc comment từ bảng Si_Demand_Source_Post";
+
             SiDemandSourcePostBUS bus = new SiDemandSourcePostBUS();
             //SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
             KafkaComment cmt = new KafkaComment();
@@ -647,6 +709,8 @@ namespace VCCorp.IG.WinForm
                 }
             }
             lblSum.Text = countCmt.ToString();
+           
+            txtStatusTooltip.Text = "Hoàn tất";
         }
 
         //Bóc comment của bảng si_demand_source_post (phân trang)
@@ -721,15 +785,82 @@ namespace VCCorp.IG.WinForm
             }
 
         }
-
-        private void btnAuto_Click(object sender, EventArgs e)
-        {
-            
-        }
-
+  
         private void timeStart_Tick(object sender, EventArgs e)
         {
-            
+            SchedulingSiCrawlDataExcel();
+        }
+
+        private void SchedulingSiCrawlDataExcel()
+        {           
+            if (_load == 0)
+            {
+                
+                txtStatusTooltip.Text = "Hệ thống đang chờ login vào IG";
+                timeStart.Stop();
+                return;//Do chưa thực hiện đăng nhập
+            }
+
+            if(_flag == 1)
+            {
+                if (_listPostSCDE.Count == 0 && _listCommentSCDE.Count == 0)
+                {
+                    Thread.Sleep(6000);
+                    txtStatusTooltip.Text = "Hiện tại chưa có link để bóc post và comment của bảng si_crawl_data_excel - Dừng";
+                    timeStart.Enabled = false;
+                    timeStart.Stop();
+                    btnAutoSiDataExcel.Enabled = true;
+                    return;
+                }
+                else if (_listPostSCDE.Count > 0 || _listCommentSCDE.Count > 0)
+                {
+                    if (_listPostSCDE.Count > 0)
+                    {
+                        txtStatusTooltip.Text = "Đang có " + _listPostSCDE.Count + " link trong bảng si_crawl_data_excel cần bóc lấy post";
+                        Thread.Sleep(6000);
+                        Thread th = new Thread(new ThreadStart(CrawlerSCDEPost));
+                        th.Start();
+                    }
+
+                    if (_listCommentSCDE.Count > 0)
+                    {
+                        txtStatusTooltip.Text = "Đang có " + _listCommentSCDE.Count + " link trong bảng si_crawl_data_excel cần bóc lấy comment";
+                        Thread.Sleep(6000);
+                        Thread th2 = new Thread(new ThreadStart(CrawlerSCDEComment));
+                        th2.Start();
+                    }                  
+                }
+            }                                   
+
+            if (_flag == 10)
+            {
+                txtStatusTooltip.Text = "Đã bóc xong 1 vòng chờ 2 phút để bóc tiếp - Si_Crawl_Data_Excel";
+                Thread.Sleep(6000);
+                timeStart.Interval = 1000 * 60 * 2;
+                timeStart.Enabled = true;
+                _flag = 1;
+                return;
+            }
+        }
+
+        private void SchedulingSiDemandSource()
+        {
+
+        }
+
+        private void SchedulingSiDemandSourcePost()
+        {
+
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnAutoSiDataExcel_Click(object sender, EventArgs e)
+        {
+            SchedulingSiCrawlDataExcel();//Gọi hàm lập lịch chạy
         }
     }
 }
