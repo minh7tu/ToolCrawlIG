@@ -34,12 +34,13 @@ namespace VCCorp.IG.WinForm
             this.txtOptions = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtOptionsAuto = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.btnLoginIG = new System.Windows.Forms.Button();
             this.btnGetSourceId = new System.Windows.Forms.Button();
-            this.btnAutoSiDataExcel = new System.Windows.Forms.Button();
-            this.btnAutoSiDemandSource = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnFresh = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.btnAuto = new System.Windows.Forms.Button();
             this.btnCrawlerPost = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnSCDEPost = new System.Windows.Forms.Button();
@@ -58,7 +59,8 @@ namespace VCCorp.IG.WinForm
             this.txtResutlUrl = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.timeStart = new System.Windows.Forms.Timer(this.components);
-            this.btnStop = new System.Windows.Forms.Button();
+            this.timerStartSDS = new System.Windows.Forms.Timer(this.components);
+            this.timerStartSDSP = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -94,6 +96,8 @@ namespace VCCorp.IG.WinForm
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtOptionsAuto);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.btnLoginIG);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.btnGetSourceId);
@@ -105,9 +109,25 @@ namespace VCCorp.IG.WinForm
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Điều kiện";
             // 
+            // txtOptionsAuto
+            // 
+            this.txtOptionsAuto.Location = new System.Drawing.Point(155, 52);
+            this.txtOptionsAuto.Name = "txtOptionsAuto";
+            this.txtOptionsAuto.Size = new System.Drawing.Size(52, 20);
+            this.txtOptionsAuto.TabIndex = 16;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 59);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(148, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Lựa chọn bảng chạy tự động:";
+            // 
             // btnLoginIG
             // 
-            this.btnLoginIG.Location = new System.Drawing.Point(18, 50);
+            this.btnLoginIG.Location = new System.Drawing.Point(21, 121);
             this.btnLoginIG.Name = "btnLoginIG";
             this.btnLoginIG.Size = new System.Drawing.Size(57, 25);
             this.btnLoginIG.TabIndex = 10;
@@ -117,7 +137,7 @@ namespace VCCorp.IG.WinForm
             // 
             // btnGetSourceId
             // 
-            this.btnGetSourceId.Location = new System.Drawing.Point(18, 81);
+            this.btnGetSourceId.Location = new System.Drawing.Point(111, 91);
             this.btnGetSourceId.Name = "btnGetSourceId";
             this.btnGetSourceId.Size = new System.Drawing.Size(87, 68);
             this.btnGetSourceId.TabIndex = 11;
@@ -125,29 +145,10 @@ namespace VCCorp.IG.WinForm
             this.btnGetSourceId.UseVisualStyleBackColor = true;
             this.btnGetSourceId.Click += new System.EventHandler(this.btnGetSourceId_Click);
             // 
-            // btnAutoSiDataExcel
-            // 
-            this.btnAutoSiDataExcel.Location = new System.Drawing.Point(6, 62);
-            this.btnAutoSiDataExcel.Name = "btnAutoSiDataExcel";
-            this.btnAutoSiDataExcel.Size = new System.Drawing.Size(98, 37);
-            this.btnAutoSiDataExcel.TabIndex = 13;
-            this.btnAutoSiDataExcel.Text = "Tự động Si Data Excel";
-            this.btnAutoSiDataExcel.UseVisualStyleBackColor = true;
-            this.btnAutoSiDataExcel.Click += new System.EventHandler(this.btnAutoSiDataExcel_Click);
-            // 
-            // btnAutoSiDemandSource
-            // 
-            this.btnAutoSiDemandSource.Location = new System.Drawing.Point(4, 20);
-            this.btnAutoSiDemandSource.Name = "btnAutoSiDemandSource";
-            this.btnAutoSiDemandSource.Size = new System.Drawing.Size(100, 36);
-            this.btnAutoSiDemandSource.TabIndex = 12;
-            this.btnAutoSiDemandSource.Text = "Tự động Si Demand Source";
-            this.btnAutoSiDemandSource.UseVisualStyleBackColor = true;
-            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btnAutoSiDemandSource);
-            this.groupBox2.Controls.Add(this.btnAutoSiDataExcel);
+            this.groupBox2.Controls.Add(this.btnAuto);
+            this.groupBox2.Controls.Add(this.btnStop);
             this.groupBox2.Location = new System.Drawing.Point(975, 22);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(110, 155);
@@ -155,15 +156,25 @@ namespace VCCorp.IG.WinForm
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Tiện ích";
             // 
-            // btnFresh
+            // btnStop
             // 
-            this.btnFresh.Location = new System.Drawing.Point(9, 112);
-            this.btnFresh.Name = "btnFresh";
-            this.btnFresh.Size = new System.Drawing.Size(74, 37);
-            this.btnFresh.TabIndex = 14;
-            this.btnFresh.Text = "Làm mới";
-            this.btnFresh.UseVisualStyleBackColor = true;
-            this.btnFresh.Click += new System.EventHandler(this.btnFresh_Click);
+            this.btnStop.Location = new System.Drawing.Point(19, 81);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(74, 37);
+            this.btnStop.TabIndex = 16;
+            this.btnStop.Text = "Dừng";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // btnAuto
+            // 
+            this.btnAuto.Location = new System.Drawing.Point(19, 25);
+            this.btnAuto.Name = "btnAuto";
+            this.btnAuto.Size = new System.Drawing.Size(74, 37);
+            this.btnAuto.TabIndex = 14;
+            this.btnAuto.Text = "Tự động";
+            this.btnAuto.UseVisualStyleBackColor = true;
+            this.btnAuto.Click += new System.EventHandler(this.btnFresh_Click);
             // 
             // btnCrawlerPost
             // 
@@ -241,8 +252,6 @@ namespace VCCorp.IG.WinForm
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.btnStop);
-            this.groupBox4.Controls.Add(this.btnFresh);
             this.groupBox4.Controls.Add(this.lblError);
             this.groupBox4.Controls.Add(this.lblOk);
             this.groupBox4.Controls.Add(this.lblSum);
@@ -332,15 +341,13 @@ namespace VCCorp.IG.WinForm
             // 
             this.timeStart.Tick += new System.EventHandler(this.timeStart_Tick);
             // 
-            // btnStop
+            // timerStartSDS
             // 
-            this.btnStop.Location = new System.Drawing.Point(89, 112);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(74, 37);
-            this.btnStop.TabIndex = 16;
-            this.btnStop.Text = "Dừng";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            this.timerStartSDS.Tick += new System.EventHandler(this.timerStartSDS_Tick);
+            // 
+            // timerStartSDSP
+            // 
+            this.timerStartSDSP.Tick += new System.EventHandler(this.timerStartSDSP_Tick);
             // 
             // frmListSource
             // 
@@ -395,15 +402,17 @@ namespace VCCorp.IG.WinForm
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtResutlUrl;
-        private System.Windows.Forms.Button btnAutoSiDataExcel;
-        private System.Windows.Forms.Button btnAutoSiDemandSource;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button btnSCDEComment;
         private System.Windows.Forms.Button btnSCDEPost;
-        private System.Windows.Forms.Button btnFresh;
+        private System.Windows.Forms.Button btnAuto;
         private System.Windows.Forms.Timer timeStart;
         private System.Windows.Forms.StatusStrip lblStatus;
         private System.Windows.Forms.ToolStripStatusLabel txtStatusTooltip;
         private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.TextBox txtOptionsAuto;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Timer timerStartSDS;
+        private System.Windows.Forms.Timer timerStartSDSP;
     }
 }

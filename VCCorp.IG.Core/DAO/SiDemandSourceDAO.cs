@@ -25,12 +25,18 @@ namespace VCCorp.IG.Core.DAO
         /// Lấy danh sách theo thứ tự ưu tiên
         /// </summary>
         /// <returns></returns>
-        public List<SiDemandSourceDTO> GetList(int status)
+        public List<SiDemandSourceDTO> GetList(int? status)
         {
             List<SiDemandSourceDTO> listPost = new List<SiDemandSourceDTO>();
             _context.OpenMySql();
 
-            string sql = "SELECT id, link, source_id,platform, status, frequency_crawl_current_date FROM si_demand_source where lock_tmp != 1 AND link like '%instagram%' and status='"+status+"'"+" order by priority";
+            //string sql = "SELECT id, link, source_id,platform, status, frequency_crawl_current_date,frequency FROM si_demand_source where lock_tmp != 1 AND link like '%instagram%' and status='"+status+"'"+" order by priority";
+
+            string sql = "SELECT * FROM si_demand_source where link like '%instagram%' " +
+            "and status != -1 and frequency != '0' " +
+            "and convert(SUBSTRING_INDEX(frequency, '/', 1), unsigned) >= frequency_crawl_current_date " +
+            "and TIMESTAMPDIFF(MINUTE, now(), update_time_crawl) < 5 " +
+            "order by priority desc limit 0, 200;";
 
             MySqlCommand cmd = new MySqlCommand(sql, _context._connect);
             cmd.CommandTimeout = int.MaxValue;
@@ -50,7 +56,7 @@ namespace VCCorp.IG.Core.DAO
                 dto.Link = "https://www.instagram.com/graphql/query/?query_hash=472f257a40c653c64c666ce877d59d2b&variables={%22id%22:%22" + profileid + "%22,%22first%22:5000}";
                 dto.Platform = dataReader["platform"].ToString();
                 dto.Status = Convert.ToInt32( dataReader["status"]);
-
+                dto.Frequency = dataReader["frequency"].ToString();
                 listPost.Add(dto);
             }
 
@@ -65,7 +71,7 @@ namespace VCCorp.IG.Core.DAO
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <param name="stscurren"></param>
-        /// <param name="crawlcurrent"></param>
+        /// <param name="crawlcurrent"></param>//Gọi hàm lập lịch để update time crawl
         /// <param name="crawledate"></param>
         public void Update(string id, string status, string stscurren, string crawlcurrent, string crawledate)
         {
