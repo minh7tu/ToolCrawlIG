@@ -46,7 +46,7 @@ namespace VCCorp.IG.Core.DAO
 
             _context.OpenMySql();
 
-            string sql = "select id,post_id,status,link from si_crawl_data_excel where link like '%instagram%' and status = 2";
+            string sql = "select id,post_id,status,link from si_crawl_data_excel where link like '%instagram%' and status = 0";
 
             MySqlCommand cmd = new MySqlCommand(sql, _context._connect);
 

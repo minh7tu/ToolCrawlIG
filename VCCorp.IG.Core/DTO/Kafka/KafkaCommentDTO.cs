@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VCCorp.IG.Core.DTO.Kafka
 {
-    public class KafkaComment
+    public class KafkaCommentDTO
     {
         public string Id { get; set; }
         public string CommentId { get; set; }

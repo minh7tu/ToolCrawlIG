@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 using VCCorp.IG.Core.DTO.JsonToObjectIG;
 using System.Threading;
 using VCCorp.IG.Core.DTO.Kafka;
-
+using VCCorp.IG.Core.Helper;
 
 namespace VCCorp.IG.WinForm
 {
@@ -31,7 +31,7 @@ namespace VCCorp.IG.WinForm
         List<SiCrawlDataExcelDTO> _listCommentSCDE = new List<SiCrawlDataExcelDTO>();
         List<SiDemandSourceDTO> _listSource = new List<SiDemandSourceDTO>();
         List<SiDemandSourcePostDTO> _listPost = new List<SiDemandSourcePostDTO>();
-        List<KafkaComment> _listComment = new List<KafkaComment>();
+        List<KafkaCommentDTO> _listComment = new List<KafkaCommentDTO>();
         SiDemandSourcePostBUS _busPost = new SiDemandSourcePostBUS();
         static int count;
         static int _countCmt = 0;
@@ -347,8 +347,8 @@ namespace VCCorp.IG.WinForm
             _listCommentSCDE = bus.GetListComment();//Lấy danh sách
         }
 
-        //Bóc post của bảng si_crawl_data_excel
-        private void CrawlerSCDEPost()
+        //Bóc post của bảng si_crawl_data_excel 
+        private async void CrawlerSCDEPost()
         {
             int dem = 1;
             SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
@@ -399,7 +399,7 @@ namespace VCCorp.IG.WinForm
                         //Đưa vào db si_excel_history
 
                         //bắn lên kafka
-                        KafaPostDTO kafka = new KafaPostDTO();
+                        KafkaPostDTO kafka = new KafkaPostDTO();
                         kafka.Id = dto.PostId;
                         kafka.Message = dto.Content;
                         kafka.ShortCode = dto.ShortCode;
@@ -417,7 +417,7 @@ namespace VCCorp.IG.WinForm
                         kafka.Username = "";
                         kafka.ImageUser = "";
 
-                       
+                        await SaveKafka(kafka);
                     }
                     bus.Update(item.Id, "", 3);//Cập nhập trạng thái trên bảng si_crawl_data_excel đã bóc xong chờ bóc comment
                 }
@@ -432,8 +432,8 @@ namespace VCCorp.IG.WinForm
             
         }
 
-        //Bóc comment của bảng si_crawl_data_excel
-        private void CrawlerSCDEComment()
+        //Bóc comment của bảng si_crawl_data_excel 
+        private async void CrawlerSCDEComment()
         {
             SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
             //_listCommentSCDE = bus.GetListComment();//Lấy danh sách
@@ -459,7 +459,7 @@ namespace VCCorp.IG.WinForm
                     
                     foreach (var data in objRoot.data.shortcode_media.edge_media_to_comment.edges)
                     {
-                        KafkaComment cmt = new KafkaComment();
+                        KafkaCommentDTO cmt = new KafkaCommentDTO();
 
                         //kafka - lấy dữ liệu từ bảng si_demand_source_post
                         cmt.PostId = item.PostId;
@@ -472,6 +472,7 @@ namespace VCCorp.IG.WinForm
                         cmt.OwnerProfilePicUrl = data.node.owner.profile_pic_url;
                         cmt.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.node.created_at);
 
+                        await SaveKafka(cmt);
                         //Đưa vào list và bắn lên kafka
                         _listComment.Add(cmt);
 
@@ -493,14 +494,15 @@ namespace VCCorp.IG.WinForm
             _flag = 10;
         }
 
-        //Bóc post từ bảng si_demand_source
-        private void CrawlerSDSPost()
+        //Bóc post từ bảng si_demand_source 
+        private async void CrawlerSDSPost()
         {
             //GetListSiDemandSource();
 
             //txtStatusTooltip.Text = "Đang thực hiện bóc Post từ bảng Si_Demand_Source";
 
             SiDemandSourceBUS bus = new SiDemandSourceBUS();
+            VCCorp.IG.Core.Helper.Scheduing scheduing = new Core.Helper.Scheduing();
 
             SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
 
@@ -513,7 +515,7 @@ namespace VCCorp.IG.WinForm
                 //dto.SiDemandSourceId = id;
                 //dto.Platform = item.Platform;
 
-                //bus.Update(item.Id.ToString(), "1", "in process", "", "");//Cập nhập trạng thái trên bảng si_demand_source - đang bóc
+                bus.Update(item.Id.ToString(), "1", "in process", "", "");//Cập nhập trạng thái trên bảng si_demand_source - đang bóc
 
                 string source = GetSourceFromBrowser();
 
@@ -553,16 +555,35 @@ namespace VCCorp.IG.WinForm
                                 dto.Title = "";
                                 dto.TotalShare = 0;
                                 dto.UserCrawler = "thuyetnd";
-                                dto.ServerNameCrawl = "";
+                                dto.ServerNameCrawl = Core.Helper.Utilies.GetLocalIP();
 
-                                //bắn lên kafka
+                                //bắn post lên kafka
+                                KafkaPostDTO kafka = new KafkaPostDTO();
+                                kafka.Id = dto.PostId;
+                                kafka.Message = dto.Content;
+                                kafka.ShortCode = data.node.shortcode;
+                                kafka.Link = dto.Link;
+                                kafka.TotalComment = dto.TotalComment;
+                                kafka.TotalLike = dto.TotalLike;
+                                kafka.TotalShare = 0;
+                                kafka.TotalReaction = 0;
+                                kafka.ImagePost = dto.ImagePost;
+                                kafka.Platform = dto.Platform;
+                                kafka.CreateTime = dto.CreateTime;
+                                kafka.UpdateTime = DateTime.Now;
+                                kafka.TmpTime = data.node.taken_at_timestamp;
+                                kafka.UserId = dto.UserId;
+                                kafka.Username = "";
+                                kafka.ImageUser = "";
+
+                                await SaveKafka(kafka);
 
                                 //Lưu tạm vào list và db
                                 _countPost += 1;
 
                                 rtxtDisplayResult.AppendText(_countPost.ToString() + "\t" + dto.Link + "\n");
                                 //_listPost.Add(dto);
-                                //_busPost.Insert(dto);//Thêm bản ghi vào bảng si_demand_source_post
+                                _busPost.Insert(dto);//Thêm bản ghi vào bảng si_demand_source_post
 
                             }
 
@@ -577,22 +598,23 @@ namespace VCCorp.IG.WinForm
                                 Endursor(userId, endCursor);
                             }
 
-                            string crawlcurrentdate = item.FrequencyCrawlCurrentDate.ToString();
+                            int crawlcurrentdate = item.FrequencyCrawlCurrentDate +1 ;
                             crawlcurrentdate += 1;
 
-                            string crawlerDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                            //string crawlerDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                            string crawlerDate = scheduing.CalculateDelayTime(item.Frequency, item.FrequencyCrawlCurrentDate).ToString("MM/dd/yyyy HH:mm:ss");
 
-                            //bus.Update(item.Id.ToString(), "2", "done", crawlcurrentdate , crawlerDate); // Cập nhập trạng thái trong bảng si_demand_source đã bóc hoàn thành
+                            bus.Update(item.Id.ToString(), "2", "done", crawlcurrentdate.ToString()  , crawlerDate); // Cập nhập trạng thái trong bảng si_demand_source đã bóc hoàn thành
                         }
                     }
                     else
-                    {
-                        //bus.Update(item.Id.ToString(), "-1", "", "","");//cập nhập trạng thái là bóc lỗi trong bảng si_demand_source
+                    {                      
+                        bus.Update(item.Id.ToString(), "-1", " ", " "," ");//cập nhập trạng thái là bóc lỗi trong bảng si_demand_source
                     }
                 }
                 catch (Exception)
                 {
-                    //bus.Update(item.Id.ToString(), "-1", "", "","");//cập nhập trạng thái là bóc lỗi trong bảng si_demand_source
+                    bus.Update(item.Id.ToString(), "-1", " ", " ", " ");//cập nhập trạng thái là bóc lỗi trong bảng si_demand_source
                 }
 
                
@@ -602,7 +624,7 @@ namespace VCCorp.IG.WinForm
         }
         
         //Bóc trang tiếp của post hiện tại bảng si_demand_source
-        private void Endursor(string UserId, string nextPage)
+        private async void Endursor(string UserId, string nextPage)
         {
             SiDemandSourceBUS bus = new SiDemandSourceBUS();
             SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
@@ -650,15 +672,33 @@ namespace VCCorp.IG.WinForm
                                 dto.TotalShare = 0;
                                 dto.UserCrawler = "thuyetnd";
                                 dto.ServerNameCrawl = "";
+                               
+                                //bắn post lên kafka
+                                KafkaPostDTO kafka = new KafkaPostDTO();
+                                kafka.Id = dto.PostId;
+                                kafka.Message = dto.Content;
+                                kafka.ShortCode = data.node.shortcode;
+                                kafka.Link = dto.Link;
+                                kafka.TotalComment = dto.TotalComment;
+                                kafka.TotalLike = dto.TotalLike;
+                                kafka.TotalShare = 0;
+                                kafka.TotalReaction = 0;
+                                kafka.ImagePost = dto.ImagePost;
+                                kafka.Platform = dto.Platform;
+                                kafka.CreateTime = dto.CreateTime;
+                                kafka.UpdateTime = DateTime.Now;
+                                kafka.TmpTime = data.node.taken_at_timestamp;
+                                kafka.UserId = dto.UserId;
+                                kafka.Username = "";
+                                kafka.ImageUser = "";
 
-                                //bắn lên kafka
-
+                                await SaveKafka(kafka);
                                 //Lưu tạm vào list , lưu db
                                 //_listPost.Add(dto);
                                 _countPost += 1;
 
                                 rtxtDisplayResult.AppendText(_countPost.ToString() + "\t" + dto.Link + "\n");
-                                //_busPost.Insert(dto);//Thêm bản ghi vào bảng si_demand_source_post
+                                _busPost.Insert(dto);//Thêm bản ghi vào bảng si_demand_source_post
 
                             }
                             string userId = item.SourceId;
@@ -685,14 +725,14 @@ namespace VCCorp.IG.WinForm
             }
         }
 
-        //Bóc comment từ bảng si_demand_source_post
-        private void CrawlerSDSComment()
+        //Bóc comment từ bảng si_demand_source_post 
+        private async void CrawlerSDSComment()
         {
             //txtStatusTooltip.Text = "Đang bóc comment từ bảng Si_Demand_Source_Post";
 
             SiDemandSourcePostBUS bus = new SiDemandSourcePostBUS();
             //SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
-            KafkaComment cmt = new KafkaComment();
+            KafkaCommentDTO cmt = new KafkaCommentDTO();
             int countCmt = 0;
 
             //_listPost = bus.GetListSourcePost();
@@ -710,7 +750,7 @@ namespace VCCorp.IG.WinForm
                 //Thread.Sleep(10000);
                 //txtStatusTooltip.Text = "";
                 //rtxtDisplayResult.AppendText("Link: " + _countCmt.ToString() + "-----------------\n\n");
-                //bus.Update(item.Id.ToString(), "1", "");//Cập nhập trạng thái trong bảng si_demand_source_post là đang bóc
+                bus.Update(item.Id.ToString(), "1", "");//Cập nhập trạng thái trong bảng si_demand_source_post là đang bóc
                 _browser.Load(item.LinkCrawler);
                 txtResutlUrl.Text = item.LinkCrawler;
                 Thread.Sleep(6000);
@@ -740,7 +780,7 @@ namespace VCCorp.IG.WinForm
 
                         //Đưa vào list và bắn lên kafka
                         _listComment.Add(cmt);
-
+                        await SaveKafka(cmt);
                         _countCmtDetail += 1;
 
                         //rtxtDisplayResult.AppendText(_countCmtDetail.ToString() + "\t" + cmt.CommentText + "\n");
@@ -758,11 +798,11 @@ namespace VCCorp.IG.WinForm
                     {
 
                     }
-                    //bus.Update(item.Id.ToString(), "2", "");//Cập nhập trạng thái trong bảng si_demand_source_post hoàn thành
+                    bus.Update(item.Id.ToString(), "2", "");//Cập nhập trạng thái trong bảng si_demand_source_post hoàn thành
                 }
                 else
                 {
-                    //bus.Update(item.Id.ToString(), "-1", "");//Cập nhập trạng thái trong bảng si_demand_source_post lỗi
+                    bus.Update(item.Id.ToString(), "-1", "");//Cập nhập trạng thái trong bảng si_demand_source_post lỗi
                 }
             }
             //lblSum.Text = countCmt.ToString();
@@ -772,12 +812,10 @@ namespace VCCorp.IG.WinForm
         }
 
         //Bóc comment của bảng si_demand_source_post (phân trang)
-        private void EndursorComment(string shortCode, string nextPage)
+        private async void EndursorComment(string shortCode, string nextPage)
         {
             SiDemandSourcePostBUS bus = new SiDemandSourcePostBUS();
             //SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
-
-
 
             _listPost = bus.GetListSourcePost();
 
@@ -801,7 +839,7 @@ namespace VCCorp.IG.WinForm
                     {
                         foreach (var data in objRoot.data.shortcode_media.edge_media_to_comment.edges)
                         {
-                            KafkaComment cmt = new KafkaComment();
+                            KafkaCommentDTO cmt = new KafkaCommentDTO();
 
                             //kafka - lấy dữ liệu từ bảng si_demand_source_post
                             cmt.PostId = item.PostId;
@@ -818,7 +856,7 @@ namespace VCCorp.IG.WinForm
                             _listComment.Add(cmt);
                             //Tìm phân trang nếu có
                             _countCmtDetail += 1;
-
+                            await SaveKafka(cmt);
                             //rtxtDisplayResult.AppendText(_countCmtDetail.ToString() + "\t" + cmt.CommentText + "\n");
 
                         }
@@ -943,7 +981,7 @@ namespace VCCorp.IG.WinForm
                     txtStatusTooltip.Text = "Hiện tại chưa có link để bóc post của bảng si_demand_source - Dừng";
                     timerStartSDS.Enabled = false;
                     timerStartSDS.Stop();
-                    _flag = 10;
+                    //_flag = 10;
                     //btnAutoSiDataExcel.Enabled = true;
                     return;
                 }  
@@ -988,7 +1026,7 @@ namespace VCCorp.IG.WinForm
                     txtStatusTooltip.Text = "Hiện tại chưa có link để bóc comment của bảng si_demand_source_post - Dừng";
                     timerStartSDSP.Enabled = false;
                     timerStartSDSP.Stop();
-                    _flag = 10;
+                    //_flag = 10;
                     //btnAutoSiDataExcel.Enabled = true;
                     return;
                 }
@@ -996,9 +1034,9 @@ namespace VCCorp.IG.WinForm
                 {
                     txtStatusTooltip.Text = "Đang có " + _listPost.Count + " link trong bảng si_demand_source_post cần bóc lấy comment";
                     Thread.Sleep(6000);
-                    //Thread th = new Thread(new ThreadStart(CrawlerSDSComment));
-                    //th.Start();
-                    CrawlerSDSComment();
+                    Thread th = new Thread(new ThreadStart(CrawlerSDSComment));
+                    th.Start();
+                    //CrawlerSDSComment();
                 }    
             }
 
@@ -1029,24 +1067,34 @@ namespace VCCorp.IG.WinForm
             SchedulingSiDemandSource();
         }
 
-        private DateTime CalculateDelayTime(string frequency, int timeCrawledAtDay)
+        //Bắn post lên kafka
+        private async Task SaveKafka(KafkaPostDTO dto)
         {
-            /*
-             * 5/1: 5 time at day
-             * 2/7: 2 time at week
-             * 1/30: once at month
-             */
-            string[] arrString = frequency.Split('/');
-            byte[] arrTime = { byte.Parse(arrString[0]), byte.Parse(arrString[1]) };
-            byte delta = 0;
-
-            if (timeCrawledAtDay >= (arrTime[0] / 1.5))
+            try
             {
-                delta = 1;
-            }
+                string msg = dto.ToJson();
 
-            return DateTime.Now.AddHours(((arrTime[1] * 24) / arrTime[0]) + delta);
+                string putPost = await Kafka.PutOnKafkaPostINS(msg);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
+        //Bắn comment lên kafka
+        private async Task SaveKafka(KafkaCommentDTO dto)
+        {
+            try
+            {
+                string msg = dto.ToJson();
+
+                string putPost = await Kafka.PutOnKafkaCmtINS(msg);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

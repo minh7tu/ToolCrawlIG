@@ -73,25 +73,30 @@ namespace VCCorp.IG.Core.DAO
         /// <param name="stscurren"></param>
         /// <param name="crawlcurrent"></param>//Gọi hàm lập lịch để update time crawl
         /// <param name="crawledate"></param>
-        public void Update(string id, string status, string stscurren, string crawlcurrent, string crawledate)
+        public void Update(string id, string status, string frequencyCrawlStatusCurrentDate, string frequencyCrawlCurrentDate, string updateTimeCrawl)
         {
             _context.OpenMySql();
 
             try
             {
-                string sql = "Update si_demand_source set status=" + status;
-                if (!string.IsNullOrEmpty(stscurren))
+                string sql = "update si_demand_source set status=" + status + ",frequency_crawl_status_current_date='" + frequencyCrawlStatusCurrentDate + "',frequency_crawl_current_date='" + frequencyCrawlCurrentDate + "'";
+
+                //string sql = "Update si_demand_source set status=" + status;
+                ////sql += "', frequency_crawl_status_current_date = '" + stscurren + "'";
+                ////sql += ", frequency_crawl_current_date = '" + crawlcurrent + "'";
+                //if (!string.IsNullOrEmpty(stscurren))
+                //{
+                //    sql += ", frequency_crawl_status_current_date = ''";
+                //}
+                //if (string.IsNullOrEmpty(crawlcurrent))
+                //{
+                //    sql += ", frequency_crawl_current_date = '" + crawlcurrent + "'";
+                //}
+                //sql += ", user_crawler = 'Thuyetnd'";
+                ////sql += ", update_time_crawl = " + "STR_TO_DATE('" + crawledate.ToString() + "', '%m/%d/%Y %H:%i:%s')";
+                if (!string.IsNullOrEmpty(updateTimeCrawl))
                 {
-                    sql += ", frequency_crawl_status_current_date = '" + stscurren + "'";
-                }
-                if (!string.IsNullOrEmpty(crawlcurrent))
-                {
-                    sql += ", frequency_crawl_current_date = '" + crawlcurrent + "'";
-                }
-                sql += ", user_crawler = 'Cucnt'";
-                if (!string.IsNullOrEmpty(crawledate))
-                {
-                    sql += ", update_time_crawl = " + "STR_TO_DATE('" + crawledate.ToString() + "', '%m/%d/%Y %H:%i:%s')";
+                    sql += ", update_time_crawl = " + "STR_TO_DATE('" + updateTimeCrawl.ToString() + "', '%m/%d/%Y %H:%i:%s')";
                 }
 
                 sql += " where Id='" + id + "'";

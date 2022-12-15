@@ -27,7 +27,7 @@ namespace VCCorp.IG.Core.DAO
 
             //SiDemandSourcePostDTO info = new SiDemandSourcePostDTO();
 
-            string sql = "insert into si_demand_source_post (si_demand_source_id, post_id, platform, link, create_time, update_time, status";
+            string sql = "insert ignore into si_demand_source_post (si_demand_source_id, post_id, platform, link, create_time, update_time, status";
             sql += ", title, content, total_comment, total_like,total_share,user_crawler, server_name_crawl) values ('";
             sql += info.SiDemandSourceId + "'";
             sql += ", N'" + info.PostId + "'";
@@ -47,6 +47,8 @@ namespace VCCorp.IG.Core.DAO
 
             MySqlCommand cmd = new MySqlCommand(sql, _context._connect);
             cmd.ExecuteNonQuery();
+
+            _context.Dispose();
         }
 
         public void Update(string id, string status, string stscurrentime)
