@@ -88,7 +88,7 @@ namespace VCCorp.IG.WinForm
             //SiDemandSourceDTO dto = new SiDemandSourceDTO();
 
             int i = 1;
-            txtOptions.Text = Convert.ToString("2");
+            txtOptions.Text = Convert.ToString("0");
 
             try
             {
@@ -211,7 +211,7 @@ namespace VCCorp.IG.WinForm
             //_load = 0; //Đánh dấu trạng thái đang login vào IG
         }
 
-        //Cập nhập source id null
+        //Cập nhập source id null trong bảng si_demand_source
         private void btnGetSourceId_Click(object sender, EventArgs e)
         {
             SiDemandSourceDTO dto = new SiDemandSourceDTO();
@@ -237,13 +237,13 @@ namespace VCCorp.IG.WinForm
                     dto.SourceId = ObjRoot.graphql.user.id;
                     if (string.IsNullOrEmpty(dto.SourceId))
                     {
-                        //bus.Update(dto.Id.ToString(), dto.SourceId);//Cập nhập lại source id khi nó bị null trong bảng si_demand_source khi thành công
+                        bus.Update(dto.Id.ToString(), dto.SourceId);//Cập nhập lại source id khi nó bị null trong bảng si_demand_source khi thành công
                     }
                     else
                     {
                         rtxtDisplayResult.AppendText(dto.Id.ToString());
                         //dto.SourceId = "-1";
-                        //bus.Update(dto.Id.ToString(), dto.SourceId);//cập nhập lại source id null trong bảng si_demand_source khi lỗi
+                        bus.Update(dto.Id.ToString(), dto.SourceId);//cập nhập lại source id null trong bảng si_demand_source khi lỗi
                     }
 
                 }
@@ -251,7 +251,7 @@ namespace VCCorp.IG.WinForm
             }
         }
 
-        //Lấy source từ trình duyệt
+        //Load source từ trình duyệt
         private string GetSourceFromBrowser()
         {
             var task1 = _browser.GetSourceAsync();
@@ -285,7 +285,7 @@ namespace VCCorp.IG.WinForm
             CrawlerSDSComment();
         }
         
-        //Chạy tự động
+        //Chạy tự động theo các lựa chọn
         private void btnFresh_Click(object sender, EventArgs e)
         {
             try
