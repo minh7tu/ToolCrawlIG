@@ -88,11 +88,11 @@ namespace VCCorp.IG.WinForm
             //SiDemandSourceDTO dto = new SiDemandSourceDTO();
 
             int i = 1;
-            txtOptions.Text = Convert.ToString("0");
+            //txtOptions.Text = Convert.ToString("0");
 
             try
             {
-                _listSource = source?.GetList(Convert.ToInt32(txtOptions.Text));
+                _listSource = source?.GetList();
                 
             }
             catch
@@ -515,7 +515,7 @@ namespace VCCorp.IG.WinForm
                 //dto.SiDemandSourceId = id;
                 //dto.Platform = item.Platform;
 
-                bus.Update(item.Id.ToString(), "1", "in process", "", "");//Cập nhập trạng thái trên bảng si_demand_source - đang bóc
+                bus.Update(item.Id.ToString(), "1", "in process", (item.FrequencyCrawlCurrentDate + 1).ToString(), "");//Cập nhập trạng thái trên bảng si_demand_source - đang bóc
 
                 string source = GetSourceFromBrowser();
 
@@ -989,8 +989,9 @@ namespace VCCorp.IG.WinForm
                 {
                     txtStatusTooltip.Text = "Đang có " + _listSource.Count + " link trong bảng si_demand_source cần bóc lấy post";
                     Thread.Sleep(6000);
-                    Thread th = new Thread(new ThreadStart(CrawlerSDSPost));
-                    th.Start();
+                    //Thread th = new Thread(new ThreadStart(CrawlerSDSPost));
+                    //th.Start();
+                    CrawlerSDSPost();
                 }    
             }
 

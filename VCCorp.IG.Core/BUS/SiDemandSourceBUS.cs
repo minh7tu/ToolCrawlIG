@@ -17,9 +17,9 @@ namespace VCCorp.IG.Core.BUS
             _dao = new SiDemandSourceDAO();
         }
 
-        public List<SiDemandSourceDTO> GetList(int status)
+        public List<SiDemandSourceDTO> GetList()
         {
-            return _dao.GetList(status);
+            return _dao.GetList();
         }
 
         public void Update(string id, string status, string stscurren, string crawlcurrent, string crawledate)

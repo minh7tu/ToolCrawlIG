@@ -25,7 +25,7 @@ namespace VCCorp.IG.Core.DAO
         /// Lấy danh sách theo thứ tự ưu tiên
         /// </summary>
         /// <returns></returns>
-        public List<SiDemandSourceDTO> GetList(int? status)
+        public List<SiDemandSourceDTO> GetList()
         {
             List<SiDemandSourceDTO> listPost = new List<SiDemandSourceDTO>();
             _context.OpenMySql();
@@ -55,6 +55,7 @@ namespace VCCorp.IG.Core.DAO
                 //dto.Link = dataReader["link"].ToString();
                 dto.Link = "https://www.instagram.com/graphql/query/?query_hash=472f257a40c653c64c666ce877d59d2b&variables={%22id%22:%22" + profileid + "%22,%22first%22:5000}";
                 dto.Platform = dataReader["platform"].ToString();
+                dto.FrequencyCrawlCurrentDate = (int)dataReader["frequency_crawl_current_date"];
                 dto.Status = Convert.ToInt32( dataReader["status"]);
                 dto.Frequency = dataReader["frequency"].ToString();
                 listPost.Add(dto);
