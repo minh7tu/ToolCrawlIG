@@ -581,7 +581,7 @@ namespace VCCorp.IG.WinForm
                                 //Lưu tạm vào list và db
                                 _countPost += 1;
 
-                                rtxtDisplayResult.AppendText(_countPost.ToString() + "\t" + dto.Link + "\n");
+                                //rtxtDisplayResult.AppendText(_countPost.ToString() + "\t" + dto.Link + "\n");
                                 //_listPost.Add(dto);
                                 _busPost.Insert(dto);//Thêm bản ghi vào bảng si_demand_source_post
 
@@ -704,7 +704,7 @@ namespace VCCorp.IG.WinForm
                                 //_listPost.Add(dto);
                                 _countPost += 1;
 
-                                rtxtDisplayResult.AppendText(_countPost.ToString() + "\t" + dto.Link + "\n");
+                                //rtxtDisplayResult.AppendText(_countPost.ToString() + "\t" + dto.Link + "\n");
                                 _busPost.Insert(dto);//Thêm bản ghi vào bảng si_demand_source_post
 
                             }
@@ -759,7 +759,7 @@ namespace VCCorp.IG.WinForm
                 //rtxtDisplayResult.AppendText("Link: " + _countCmt.ToString() + "-----------------\n\n");
                 bus.Update(item.Id.ToString(), "1", "");//Cập nhập trạng thái trong bảng si_demand_source_post là đang bóc
                 _browser.Load(item.LinkCrawler);
-                txtResutlUrl.Text = item.LinkCrawler;
+                //txtResutlUrl.Text = item.LinkCrawler;
                 Thread.Sleep(6000);
 
                 string source = GetSourceFromBrowser();
@@ -786,7 +786,7 @@ namespace VCCorp.IG.WinForm
                         cmt.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.node.created_at);
 
                         //Đưa vào list và bắn lên kafka
-                        _listComment.Add(cmt);
+                        //_listComment.Add(cmt);
                         await SaveKafka(cmt);
                         _countCmtDetail += 1;
 
@@ -860,7 +860,7 @@ namespace VCCorp.IG.WinForm
                             cmt.CreateTime = VCCorp.IG.Core.Helper.DateTimeFormatAgain.UnixTimeStampToDateTime(data.node.created_at);
 
                             //Đưa vào list và bắn lên kafka
-                            _listComment.Add(cmt);
+                            //_listComment.Add(cmt);
                             //Tìm phân trang nếu có
                             _countCmtDetail += 1;
                             await SaveKafka(cmt);
