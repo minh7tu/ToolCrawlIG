@@ -9,7 +9,7 @@ namespace VCCorp.IG.Core.Helper
 {
     public class MySqlDbContext
     {
-        internal static string _cons = @"Server=192.168.23.22;Database=social_index_v2;User ID=thuyetnd;Password=AIV3k6H0uzWmcoaf2RQ9;";
+        internal static string _cons = @"Server=192.168.23.22;Database=social_index_v2;User ID=thuyetnd;Password=AIV3k6H0uzWmcoaf2RQ9;charset=utf8";
         internal MySqlConnection _connect;
 
         public void OpenMySql()

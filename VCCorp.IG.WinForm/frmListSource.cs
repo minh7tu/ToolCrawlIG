@@ -661,7 +661,14 @@ namespace VCCorp.IG.WinForm
                             foreach (var data in profileRoot.data.user.edge_owner_to_timeline_media.edges)
                             {
                                 dto.PostId = data.node.id;
-                                dto.Content = data.node.text;
+
+                                foreach (var dataText in data.node.edge_media_to_caption.edges)
+                                {
+                                    string text = Regex.Replace(dataText.node.text, @"[^\w\.@-]", " ");
+                                    dto.Content = text;
+                                }
+
+                                //dto.Content = data.node.text;
                                 dto.Link = "https://www.instagram.com/p/" + data.node.shortcode;
                                 dto.TotalComment = data.node.edge_media_to_comment.count;
                                 dto.TotalLike = data.node.edge_media_preview_like.count;
@@ -671,7 +678,7 @@ namespace VCCorp.IG.WinForm
                                 dto.Title = "";
                                 dto.TotalShare = 0;
                                 dto.UserCrawler = "thuyetnd";
-                                dto.ServerNameCrawl = "";
+                                dto.ServerNameCrawl = Core.Helper.Utilies.GetLocalIP(); ;
                                
                                 //bắn post lên kafka
                                 KafkaPostDTO kafka = new KafkaPostDTO();
