@@ -52,10 +52,10 @@ namespace VCCorp.IG.WinForm
             InitBrowser();
             //_load = 1;
             _flag = 1;
-            GetListSiDemandSource();//Lấy danh sách source trong bảng si_demand_source
-            GetListSiDemandSourcePost();//Lấy danh sách các bài post trong si_demand_source_post
-            GetListSCDEPost();
-            GetListSCDEComment();
+            //GetListSiDemandSource();//Lấy danh sách source trong bảng si_demand_source
+            //GetListSiDemandSourcePost();//Lấy danh sách các bài post trong si_demand_source_post
+            //GetListSCDEPost();
+            //GetListSCDEComment();
             GetSourceIdNull();//Lấy danh sách source id null  trong bảng si_demand_source
 
             //txtOptionsAuto.Text = "3";
@@ -87,19 +87,10 @@ namespace VCCorp.IG.WinForm
             SiDemandSourceBUS source = new SiDemandSourceBUS();
             //SiDemandSourceDTO dto = new SiDemandSourceDTO();
 
-            int i = 1;
-            //txtOptions.Text = Convert.ToString("0");
-
-            try
-            {
+           
                 _listSource = source?.GetList();
                 
-            }
-            catch
-            {
-                rtxtDisplayResult.Text = "Không được bỏ trống trạng thái";
-                return;
-            }
+           
 
             //rtxtDisplayResult.Clear();
 
@@ -354,6 +345,7 @@ namespace VCCorp.IG.WinForm
             SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
 
             //_listPostSCDE = bus.GetListPost();//Lấy danh sách status = 0 trong bảng si_crawl_data_excel
+            //GetListSCDEPost();
 
             foreach (var item in _listPostSCDE)
             {
@@ -437,6 +429,7 @@ namespace VCCorp.IG.WinForm
         {
             SiCrawlDataExcelBUS bus = new SiCrawlDataExcelBUS();
             //_listCommentSCDE = bus.GetListComment();//Lấy danh sách
+            //GetListSCDEComment();
             int dem = 1;
 
             foreach (var item in _listCommentSCDE)
@@ -474,7 +467,7 @@ namespace VCCorp.IG.WinForm
 
                         await SaveKafka(cmt);
                         //Đưa vào list và bắn lên kafka
-                        _listComment.Add(cmt);
+                        //_listComment.Add(cmt);
 
                         _countCmtDetail += 1;
 
@@ -491,7 +484,7 @@ namespace VCCorp.IG.WinForm
                 Thread.Sleep(10000);
             }
 
-            _flag = 10;
+            //_flag = 10;
         }
 
         //Bóc post từ bảng si_demand_source 
@@ -620,7 +613,7 @@ namespace VCCorp.IG.WinForm
                
             }
             // txtStatusTooltip.Text = "Đã xong quá trình tự động bóc post bảng si_demand_source";
-            _flag = 10;
+            //_flag = 10;
         }
         
         //Bóc trang tiếp của post hiện tại bảng si_demand_source
@@ -633,7 +626,7 @@ namespace VCCorp.IG.WinForm
             {
                 string urlpage = "https://www.instagram.com/graphql/query/?query_hash=472f257a40c653c64c666ce877d59d2b&variables={%22id%22:%22" + UserId + "%22,%22first%22:50,%22after%22:%22" + nextPage + "%22}";
                 _browser.Load(urlpage);
-                txtResutlUrl.Text = urlpage;
+                //txtResutlUrl.Text = urlpage;
                 Thread.Sleep(6000);
 
                 var id = item.Id;
@@ -736,7 +729,7 @@ namespace VCCorp.IG.WinForm
         private async void CrawlerSDSComment()
         {
             //txtStatusTooltip.Text = "Đang bóc comment từ bảng Si_Demand_Source_Post";
-
+            //GetListSiDemandSourcePost();
             SiDemandSourcePostBUS bus = new SiDemandSourcePostBUS();
             //SiDemandSourcePostDTO dto = new SiDemandSourcePostDTO();
             KafkaCommentDTO cmt = new KafkaCommentDTO();
@@ -813,7 +806,7 @@ namespace VCCorp.IG.WinForm
                 }
             }
             //lblSum.Text = countCmt.ToString();
-            _flag = 10;
+            //_flag = 10;
             //txtStatusTooltip.Text = "Hoàn tất bóc Comment bảng Si_Demand_Source_Post";
             //Thread.Sleep(10000);
         }
@@ -917,7 +910,9 @@ namespace VCCorp.IG.WinForm
 
         //Lập lịch chạy tự động bảng Si_Crawl_Data_Excel
         private void SchedulingSiCrawlDataExcel()
-        {           
+        {
+           
+
             if (_load == 0)
             {
                 
@@ -928,13 +923,16 @@ namespace VCCorp.IG.WinForm
 
             if(_flag == 1)
             {
+                GetListSCDEPost();
+                GetListSCDEComment();
+
                 if (_listPostSCDE.Count == 0 && _listCommentSCDE.Count == 0)
                 {
                     Thread.Sleep(6000);
                     txtStatusTooltip.Text = "Hiện tại chưa có link để bóc post và comment của bảng si_crawl_data_excel - Dừng";
                     timeStart.Enabled = false;
                     timeStart.Stop();
-                    _flag = 10;
+                    //_flag = 10;
                     //btnAutoSiDataExcel.Enabled = true;
                     return;
                 }
@@ -954,7 +952,8 @@ namespace VCCorp.IG.WinForm
                         Thread.Sleep(6000);
                         Thread th2 = new Thread(new ThreadStart(CrawlerSCDEComment));
                         th2.Start();
-                    }                  
+                    }
+                    _flag = 10;
                 }
             }                                   
 
@@ -965,13 +964,14 @@ namespace VCCorp.IG.WinForm
                 timeStart.Interval = 1000 * 60 * 2;
                 timeStart.Enabled = true;
                 _flag = 1;
-                return;
             }
         }
 
         //Lập lịch chạy bảng Si_Demand_Source
         private void SchedulingSiDemandSource()
         {
+           
+
             if (_load == 0)
             {
 
@@ -982,10 +982,13 @@ namespace VCCorp.IG.WinForm
 
             if(_flag == 1)
             {
-                if(_listSource.Count == 0 && _listSource != null)
+                GetListSiDemandSource();
+
+                if (_listSource.Count == 0 && _listSource != null)
                 {
-                    Thread.Sleep(6000);
+                   
                     txtStatusTooltip.Text = "Hiện tại chưa có link để bóc post của bảng si_demand_source - Dừng";
+                    Thread.Sleep(6000);
                     timerStartSDS.Enabled = false;
                     timerStartSDS.Stop();
                     //_flag = 10;
@@ -999,18 +1002,19 @@ namespace VCCorp.IG.WinForm
                     //Thread th = new Thread(new ThreadStart(CrawlerSDSPost));
                     //th.Start();
                     CrawlerSDSPost();
-                }    
+                }
+                _flag = 10;
             }
 
             if (_flag == 10)
             {
-                GetListSiDemandSource();
+                
                 txtStatusTooltip.Text = "Đã bóc xong 1 vòng chờ 2 phút để bóc tiếp - Si_Demand_Source";
                 Thread.Sleep(6000);
                 timerStartSDS.Interval = 1000 * 60 * 2;
                 timerStartSDS.Enabled = true;
                 _flag = 1;
-                return;
+                //return;
             }
 
         }
@@ -1018,6 +1022,8 @@ namespace VCCorp.IG.WinForm
         //Lập lịch chạy bảng Si_Demand_Source_Post
         private void SchedulingSiDemandSourcePost()
         {
+           
+
             if (_load == 0)
             {
 
@@ -1028,6 +1034,8 @@ namespace VCCorp.IG.WinForm
 
             if (_flag == 1)
             {
+                GetListSiDemandSourcePost();
+
                 if (_listPost.Count == 0 && _listPost != null)
                 {
                     Thread.Sleep(6000);
@@ -1042,10 +1050,11 @@ namespace VCCorp.IG.WinForm
                 {
                     txtStatusTooltip.Text = "Đang có " + _listPost.Count + " link trong bảng si_demand_source_post cần bóc lấy comment";
                     Thread.Sleep(6000);
-                    Thread th = new Thread(new ThreadStart(CrawlerSDSComment));
-                    th.Start();
-                    //CrawlerSDSComment();
-                }    
+                    //Thread th = new Thread(new ThreadStart(CrawlerSDSComment));
+                    //th.Start();
+                    CrawlerSDSComment();
+                }
+                _flag = 10;
             }
 
             if (_flag == 10)
@@ -1055,7 +1064,7 @@ namespace VCCorp.IG.WinForm
                 timerStartSDSP.Interval = 1000 * 60 * 2;
                 timerStartSDSP.Enabled = true;
                 _flag = 1;
-                return;
+                //return;
             }
 
         }

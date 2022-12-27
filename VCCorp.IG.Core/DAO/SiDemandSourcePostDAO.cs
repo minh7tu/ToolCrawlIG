@@ -76,7 +76,7 @@ namespace VCCorp.IG.Core.DAO
 
             _context.OpenMySql();
 
-            string sql = "SELECT *  from si_demand_source_post  where total_comment > 1 AND status != -1 AND link like '%instagram%'";
+            string sql = "SELECT *  from si_demand_source_post  where total_comment != 0 AND status != -1 and status != 2 AND link like '%instagram%'";
 
             MySqlCommand cmd = new MySqlCommand(sql, _context._connect);          
 
