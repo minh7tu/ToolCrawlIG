@@ -21,6 +21,7 @@ namespace VCCorp.IG.Core.DAO
             _context = context;
         }
 
+        //Thêm bản ghi vào database si_demand_source_post
         public void Insert(SiDemandSourcePostDTO info)
         {
             _context.OpenMySql();
@@ -51,6 +52,7 @@ namespace VCCorp.IG.Core.DAO
             _context.Dispose();
         }
 
+        //Cập nhập trạng thái trong bảng si_demand_source_post
         public void Update(string id, string status, string stscurrentime)
         {
             _context.OpenMySql();
@@ -68,7 +70,8 @@ namespace VCCorp.IG.Core.DAO
             _context.Dispose();
 
         }
-
+        
+        //Lấy danh sách link có lượng comment khác 0 và trạng thái khác -1 , 2
         public List<SiDemandSourcePostDTO> GetListSourcePost()
         {
             
